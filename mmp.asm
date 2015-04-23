@@ -112,6 +112,7 @@ goodFile:
 	mul $t1,$t0,2
     	malloc($a0,$s6)
     	readfile($s5,$s6,$t1)
+    	closefile($s5)
 	move $a0,$t0
     	malloc($a0,$s0)
     	move $a0,$t0
@@ -151,8 +152,8 @@ parseloop:
     	la $a1, durationlist
     	add $a0, $a1, $a0
     	lw $a0, ($a0)
-    	div $a0, $a0, 3		#tempo modifiers
-    	mul $a0, $a0, 1
+    	div $a0, $a0, 1		#tempo modifiers
+    	mul $a0, $a0, 2
     	sw $a0, ($t1)
 #TODO: Add error detection
 
