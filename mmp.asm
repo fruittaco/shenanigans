@@ -2,12 +2,15 @@ removeNewline:
 	#$s5-string address
 	#$s6-character count
 	move $t1,$s5
+	move $s6,$0
 loop:
 	lb $t2,($t1)
-	addi $1,$t1,1
+	addi $t1,$t1,1
+	addi $s6,$s6,1
 	bnez $t2, loop
 	subi $t1,$t1,1
 	sb $0,$t1
+	subi $s6,$s6,1
 	
 
 playNotes: 
