@@ -151,8 +151,8 @@ parseloop:
     	la $a1, durationlist
     	add $a0, $a1, $a0
     	lw $a0, ($a0)
-    	div $a0, $a0, 1		#tempo modifiers
-    	mul $a0, $a0, 2
+    	div $a0, $a0, 3		#tempo modifiers
+    	mul $a0, $a0, 1
     	sw $a0, ($t1)
 #TODO: Add error detection
 
