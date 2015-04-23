@@ -78,11 +78,11 @@ main:
     	filemsg: .asciiz "Choose a music file to load\n"
     	invalidfilemsg: .asciiz "Invalid file name, please try again\n"
 
-    #Provides a list of pitches [indexed from a]
-    pitchlist: .word 57, 59, 60, 62, 64, 65, 67
-    durationlist: .word 0, 0, 0, 0, 125, 0, 0, 500, 0, 0, 0, 0, 0, 0, 0
-    ,0, 250, 60, 60, 30, 0, 0, 1000, 0, 0, 0
-
+    	#Provides a list of pitches [indexed from a]
+    	#		 A4  B4  C5  D5  E5  F5  G5  A4b B4b D5b E5b G5b                                                             A3  B3  C4  D4  E4  F4  G4  A3b B3b D4b E4b G4b A2  C3# D3  E3  F3  C3  G3
+    	pitchlist: .word 69, 71, 72, 74, 76, 77, 79, 68, 70, 73, 75, 78, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 57, 59, 60, 62, 64, 65, 67, 56, 58, 61, 63, 66, 45, 49, 50, 52, 53, 48, 55
+    	#		 A   B   C   D   E   F   G   H   I   J   K   L   M  N  O  P  Q  R  S  T  U  V  W  X  Y  Z                    a   b   c   d   e   f   g   h   i   j   k   l   m   n   o   p   q   r   s
+    	durationlist: .word 0, 0, 0, 0, 125, 0, 0, 500, 0, 0, 0, 0, 0, 0, 0 ,0, 250, 60, 60, 30, 0, 0, 1000, 0, 0, 0
     	#TODO: add in a help file or something
 
     	.text
@@ -107,16 +107,17 @@ loop:
     	printtext(invalidfilemsg)
 	j tryAgain
 goodFile:
-	li $a0, 100
+	li $t0,500 # max number of notes
+	div $a0,$t0,2
     	malloc($a0,$s6)
     	readfile($s5,$s6)
-	li $a0, 200
+	move $a0,$t0
     	malloc($a0,$s0)
-    	li $a0, 200
+    	move $a0,$t0
     	malloc($a0,$s1)
-    	li $a0, 200
+    	move $a0,$t0
     	malloc($a0,$s2)
-    	li $a0, 200
+    	move $a0,$t0
     	malloc($a0,$s3)
     	move $s4,$0
 parsefile:
@@ -135,7 +136,7 @@ parseloop:
     	lb $t7, 1($t5)
 
     	#Subtract and index into the pitch array
-    	subi $a0, $t6, 97
+    	subi $a0, $t6, 65
     	mul $a0,$a0,4
     	la $a1, pitchlist
     	add $a0, $a1, $a0
@@ -149,6 +150,8 @@ parseloop:
     	la $a1, durationlist
     	add $a0, $a1, $a0
     	lw $a0, ($a0)
+    	div $a0, $a0, 1
+    	mul $a0, $a0, 2
     	sw $a0, ($t1)
 #TODO: Add error detection
 
@@ -167,9 +170,12 @@ playNotes:
 	lw $a0, ($s0)	#pitch
 	lw $a1, ($s1)	#duration (ms)
 	li $a2, 0	#instrument (currently hard-coded to grand piano, final version may implement multiple insturments, stored in $s2)
-	li $a3, 63	#volume (will be adjustable in final version, stored in $s3)
-	li $v0, 33
+	li $a3, 100	#volume (will be adjustable in final version, stored in $s3)
+	li $v0, 31
 	syscall		#play the note
+	lw $a0, ($s1)
+	li $v0, 32
+	syscall
 	add $s0, $s0, 4	#increment array indices
 	add $s1, $s1, 4
 	add $s2, $s2, 4
