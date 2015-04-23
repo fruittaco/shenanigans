@@ -42,7 +42,7 @@ move %filedescrip, $v0
 .macro readfile(%filedescrip, %inputbuf)
 move $a0, %filedescrip
 move $a1, %inputbuf
-li $a2, 0
+li $a2, 100
 li $v0, 14
 syscall
 .end_macro
@@ -66,55 +66,6 @@ move %ptr, $v0
 #t0-3 are the locations into it
 #Reads in a list of pitch, duration pairs
 #Has
-j main
-parsefile:
-	move $t0, $s0
-	move $t1, $s1
-	move $t2, $s2
-	move $t3, $s3
-	move $t5, $s6
-
-parseloop:
-    #Read in the pitch
-    lw $t6, ($t5)
-
-    #Read in the duration
-    lw $t7, 1($t5)
-
-    #Subtract and index into the pitch array
-    subi $a0, $t6, 97
-    la $a1, pitchlist
-    add $a0, $a1, $a0
-    lw $a0, ($a0)
-    sw $a0, ($t0)
-#TODO: Add error detection
-
-    #Subtract and index into the duration array
-    subi $a0, $t7, 97
-    la $a1, durationlist
-    add $a0, $a1, $a0
-    lw $a0, ($a0)
-    sw $a0, ($t1)
-#TODO: Add error detection
-
-    #increment output array addresses
-    addi $t0, $t0, 4
-    addi $t1, $t1, 4
-
-    #increment input position
-    addi $t5, $t5, 2
-    
-    lb $a0, -1($t5)
-    li $a1, 0
-    bne $a0, $a1, parseloop
-
-
-    
-    
-
-
-
-
 
 .globl main
 
@@ -156,14 +107,59 @@ loop:
     	printtext(invalidfilemsg)
 	j tryAgain
 goodFile:
-	li $a0, 5000
+	li $a0, 100
     	malloc($a0,$s6)
     	readfile($s5,$s6)
-	printtext2($s6)
-j end
-    	addu $ra, $0, $s7
-    	jr $ra
+	li $a0, 200
+    	malloc($a0,$s0)
+    	li $a0, 200
+    	malloc($a0,$s1)
+    	li $a0, 200
+    	malloc($a0,$s2)
+    	li $a0, 200
+    	malloc($a0,$s3)
+    	move $s4,$0
+parsefile:
+	move $t0, $s0
+	move $t1, $s1
+	move $t2, $s2
+	move $t3, $s3
+	move $t5, $s6
 
+parseloop:
+	addi $s4,$s4,1
+    	#Read in the pitch
+    	lw $t6, ($t5)
+
+    	#Read in the duration
+    	lw $t7, 1($t5)
+
+    	#Subtract and index into the pitch array
+    	subi $a0, $t6, 97
+    	la $a1, pitchlist
+    	add $a0, $a1, $a0
+    	lw $a0, ($a0)
+    	sw $a0, ($t0)
+#TODO: Add error detection
+
+    	#Subtract and index into the duration array
+    	subi $a0, $t7, 97
+    	la $a1, durationlist
+    	add $a0, $a1, $a0
+    	lw $a0, ($a0)
+    	sw $a0, ($t1)
+#TODO: Add error detection
+
+    	#increment output array addresses
+    	addi $t0, $t0, 4
+    	addi $t1, $t1, 4
+
+    	#increment input position
+    	addi $t5, $t5, 2
+    
+    	lb $a0, -1($t5)
+    	li $a1, 0
+    	bne $a0, $a1, parseloop
 playNotes: 
 	ble $s4, 0, end	#$s4 is the number of notes remaining to be played
 	lw $a0, ($s0)	#pitch
