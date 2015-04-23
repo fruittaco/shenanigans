@@ -109,12 +109,13 @@ main:
     	nl: .asciiz "\n"
     	welcomemsg: .asciiz "Welcome to Shenanigans Music Interpreter\n"
     	filemsg: .asciiz "Choose a music file to load\n"
-    	readme: .asciiz "README.txt"
+    	invalidfilemsg: .asciiz "Invalid file name, please try again\n"
     	#TODO: add in a help file or something
 
     	.text
     	printtext(welcomemsg)
-
+	printtext(filemsg)
+tryAgain:
 	li $a0, 255
 	malloc($a0, $s5)
     	readstring($s5)
@@ -122,19 +123,20 @@ removeNewline:
 	#$s5-string address
 	#$s6-character count
 	move $t1,$s5
-	move $s6,$0
 loop:
 	lb $t2,($t1)
 	addi $t1,$t1,1
-	addi $s6,$s6,1
 	bnez $t2, loop
 	subi $t1,$t1,2
 	sb $0,($t1)
-	subi $s6,$s6,1
 	openfile($s5, $s5)
+	move $t9,$v0
     	printint($v0)
 	printtext(nl)
-	#TODO: test non-negative
+	bge $t9, $0,goodFile
+	printtext(invalidfilemsg)
+	j tryAgain
+goodFile:
 j end
     	addu $ra, $0, $s7
     	jr $ra
