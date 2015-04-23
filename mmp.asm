@@ -129,13 +129,14 @@ parsefile:
 parseloop:
 	addi $s4,$s4,1
     	#Read in the pitch
-    	lw $t6, ($t5)
+    	lb $t6, ($t5)
 
     	#Read in the duration
-    	lw $t7, 1($t5)
+    	lb $t7, 1($t5)
 
     	#Subtract and index into the pitch array
     	subi $a0, $t6, 97
+    	mul $a0,$a0,4
     	la $a1, pitchlist
     	add $a0, $a1, $a0
     	lw $a0, ($a0)
@@ -144,6 +145,7 @@ parseloop:
 
     	#Subtract and index into the duration array
     	subi $a0, $t7, 97
+    	mul $a0,$a0,4
     	la $a1, durationlist
     	add $a0, $a1, $a0
     	lw $a0, ($a0)
@@ -164,8 +166,8 @@ playNotes:
 	ble $s4, 0, end	#$s4 is the number of notes remaining to be played
 	lw $a0, ($s0)	#pitch
 	lw $a1, ($s1)	#duration (ms)
-	lw $a2, 0	#instrument (currently hard-coded to grand piano, final version may implement multiple insturments, stored in $s2)
-	lw $a3, 63	#volume (will be adjustable in final version, stored in $s3)
+	li $a2, 0	#instrument (currently hard-coded to grand piano, final version may implement multiple insturments, stored in $s2)
+	li $a3, 63	#volume (will be adjustable in final version, stored in $s3)
 	li $v0, 33
 	syscall		#play the note
 	add $s0, $s0, 4	#increment array indices
