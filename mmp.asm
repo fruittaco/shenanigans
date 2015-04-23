@@ -3,7 +3,7 @@ playNotes:
 	lw $a0, ($s0)	#pitch
 	lw $a1, ($s1)	#duration (ms)
 	lw $a2, 0	#instrument (currently hard-coded to grand piano, final version may implement multiple insturments, stored in $s2)
-	lw $a3, ($s3)	#volume (will be adjustable in final version, stored in $s3)
+	lw $a3, 63	#volume (will be adjustable in final version, stored in $s3)
 	li $v0, 33
 	syscall		#play the note
 	add $s0, $s0, 4	#increment array indices
