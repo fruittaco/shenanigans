@@ -39,10 +39,10 @@ syscall
 move %filedescrip, $v0
 .end_macro
 
-.macro readfile(%filedescrip, %inputbuf)
+.macro readfile(%filedescrip, %inputbuf, %numchars)
 move $a0, %filedescrip
 move $a1, %inputbuf
-li $a2, 100
+move $a2, %numchars
 li $v0, 14
 syscall
 .end_macro
@@ -107,10 +107,11 @@ loop:
     	printtext(invalidfilemsg)
 	j tryAgain
 goodFile:
-	li $t0,500 # max number of notes
+	li $t0,1000 # max number of notes
 	div $a0,$t0,2
+	mul $t1,$t0,2
     	malloc($a0,$s6)
-    	readfile($s5,$s6)
+    	readfile($s5,$s6,$t1)
 	move $a0,$t0
     	malloc($a0,$s0)
     	move $a0,$t0
@@ -150,7 +151,7 @@ parseloop:
     	la $a1, durationlist
     	add $a0, $a1, $a0
     	lw $a0, ($a0)
-    	div $a0, $a0, 1
+    	div $a0, $a0, 1		#tempo modifiers
     	mul $a0, $a0, 2
     	sw $a0, ($t1)
 #TODO: Add error detection
