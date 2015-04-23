@@ -72,7 +72,7 @@ parsefile:
 	move $t1, $s1
 	move $t2, $s2
 	move $t3, $s3
-	move $t5, $s5
+	move $t5, $s6
 
 parseloop:
     #Read in the pitch
@@ -84,7 +84,7 @@ parseloop:
     #Subtract and index into the pitch array
     subi $a0, $t6, 97
     la $a1, pitchlist
-    addi $a0, $a1, $a0
+    add $a0, $a1, $a0
     lw $a0, ($a0)
     sw $a0, ($t0)
 #TODO: Add error detection
@@ -92,7 +92,7 @@ parseloop:
     #Subtract and index into the duration array
     subi $a0, $t7, 97
     la $a1, durationlist
-    addi $a0, $a1, $a0
+    add $a0, $a1, $a0
     lw $a0, ($a0)
     sw $a0, ($t1)
 #TODO: Add error detection
@@ -104,7 +104,7 @@ parseloop:
     #increment input position
     addi $t5, $t5, 2
     
-    lw $a0, -1($t5)
+    lb $a0, -1($t5)
     li $a1, 0
     bne $a0, $a1, parseloop
 
@@ -152,13 +152,14 @@ loop:
 	subi $t1,$t1,2
 	sb $0,($t1)
 	openfile($s5, $s5)
-	move $t9,$v0
-    	printint($v0)
-	printtext(nl)
-	bge $t9, $0,goodFile
-	printtext(invalidfilemsg)
+    	bge $v0, $0,goodFile
+    	printtext(invalidfilemsg)
 	j tryAgain
 goodFile:
+	li $a0, 5000
+    	malloc($a0,$s6)
+    	readfile($s5,$s6)
+	printtext2($s6)
 j end
     	addu $ra, $0, $s7
     	jr $ra
