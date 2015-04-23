@@ -107,7 +107,7 @@ loop:
     	printtext(invalidfilemsg)
 	j tryAgain
 goodFile:
-	li $t0,500 # max number of notes
+	li $t0,1000 # max number of notes
 	div $a0,$t0,2
     	malloc($a0,$s6)
     	readfile($s5,$s6)
