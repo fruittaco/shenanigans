@@ -1,3 +1,15 @@
+removeNewline:
+	#$s5-string address
+	#$s6-character count
+	move $t1,$s5
+loop:
+	lb $t2,($t1)
+	addi $1,$t1,1
+	bnez $t2, loop
+	subi $t1,$t1,1
+	sb $0,$t1
+	
+
 playNotes: 
 	ble $s4, 0, end	#$s4 is the number of notes remaining to be played
 	lw $a0, ($s0)	#pitch
