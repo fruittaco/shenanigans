@@ -75,23 +75,39 @@ parsefile:
 	move $t5, $s5
 
 parseloop:
-    	#Read in the pitch
-    	lw $t6, ($t5)
-    	#Read in the duration
-    	lw $t7, 1($t5)
+    #Read in the pitch
+    lw $t6, ($t5)
 
-    	#Pitch: a
-    	li $a0, 97
-    	#bne $t6, $a0, elseb
+    #Read in the duration
+    lw $t7, 1($t5)
+
+    #Subtract and index into the pitch array
+    subi $a0, $t6, 97
+    la $a1, pitchlist
+    addi $a0, $a1, $a0
+    lw $a0, ($a0)
+    sw $a0, ($t0)
+#TODO: Add error detection
+
+    #Subtract and index into the duration array
+    subi $a0, $t7, 97
+    la $a1, durationlist
+    addi $a0, $a1, $a0
+    lw $a0, ($a0)
+    sw $a0, ($t1)
+#TODO: Add error detection
+
+    #increment output array addresses
+    addi $t0, $t0, 4
+    addi $t1, $t1, 4
+
+    #increment input position
+    addi $t5, $t5, 2
     
-    
+    lw $a0, -1($t5)
+    li $a1, 0
+    bne $a0, $a1, parseloop
 
-    	#increment output array addresses
-    	addi $t0, $t0, 4
-    	addi $t1, $t1, 4
-
-    	#increment input position
-    		addi $t5, $t5, 2
 
     
     
@@ -110,6 +126,10 @@ main:
     	welcomemsg: .asciiz "Welcome to Shenanigans Music Interpreter\n"
     	filemsg: .asciiz "Choose a music file to load\n"
     	readme: .asciiz "README.txt"
+    #Provides a list of pitches [indexed from a]
+    pitchlist: .word 57, 59, 60, 62, 64, 65, 67
+    durationlist: .word 0, 0, 0, 0, 125, 0, 0, 500, 0, 0, 0, 0, 0, 0, 0
+    ,0, 250, 60, 60, 30, 0, 0, 1000, 0, 0, 0
     	#TODO: add in a help file or something
 
     	.text
