@@ -93,8 +93,8 @@ main:
     	pitchlist: .word 81, 83, 72, 74, 76, 77, 79, 68, 70, 73, 75, 78, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 69, 71, 60, 62, 64, 65, 67, 56, 58, 61, 63, 66, 45, 49, 50, 52, 53, 48, 55, 57, 59
     	#		 A   B   C   D   E   F   G   H   I   J   K   L   M  N  O  P  Q  R  S  T  U  V  W  X  Y  Z                    a   b   c   d   e   f   g   h   i   j   k   l   m   n   o   p   q   r   s   t   u
     	
-	durationlist: .word 0, 0, 0, 0, 125, 0, 0, 500, 0, 0, 0, 0, 0, 0, 0 ,0, 250, 60, 60, 30, 0, 0, 1000, 0, 0, 0
-	#		    a  b  c  d   e   f  g   h   i  j  k  l  m  n  o  p   q   r   s   t   u  v   w    x  y  z
+	durationlist: .word 0, 0, 0, 0, 4, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0 ,0, 8, 2, 2, 1, 0, 0, 32, 0, 0, 0
+	#		    a  b  c  d  e  f  g  h   i  j  k  l  m  n  o  p  q  r  s  t  u  v  w   x  y  z
 
     	#TODO: add in a help file or something
 
