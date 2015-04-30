@@ -219,8 +219,7 @@ parseDuration:
     	la $a1, durationlist
     	add $a0, $a1, $a0
     	lw $a0, ($a0)
-    	div $a0, $a0, 1		#tempo modifiers
-    	mul $a0, $a0, 2
+    	mul $a0, $a0, $s5 # $s5 is duration in ms of a 1/32nd note
     	sw $a0, ($t1)
 #TODO: Add error detection
 
@@ -245,13 +244,69 @@ tempoLoop:
 	addi $t5,$t5, 1
 	lb $t8,$t5
 	subi $t8,$t8,48
-	beq $t8,125,continueParse #125=}
+	beq $t8,125,finishTempo #125=}
 	li $t9, 10
 	mul $s5, $s5, $t9
 	add $s5,$s5,$t8
 	j tempoLoop
+finishTempo:		# $s5 is now beats/min
+	li $t8,1875	# 60000ms/32 1/32beats
+	div $s5,$t8,$s5	# $s5 is now ms/32nd note
+	j continueParse
 
 volumeCommand:
+	addi $t5,$t5,2
+	lb $s7,($t5)
+	beq $s7,112,p #112='p'
+	beq $s7,109,m #109='m'
+	beq $s7,102,f #102='f'
+	j continueParse
+p:
+	addi $t5,$t5,1
+	lb $s7,($t5)
+	beq $s7,112,pp #112='p'
+	li $s7,49 #specified MIDI velocity for p
+	j continueParse
+pp:
+	addi $t5,$t5,1
+	lb $s7,($t5)
+	beq $s7,112,ppp #112='p'
+	li $s7,33 #specified MIDI velocity for pp
+	j continueParse
+ppp:
+	addi $t5,$t5,1
+	li $s7,16 #specified MIDI velocity for ppp
+	j continueParse
+m:
+	addi $t5,$t5,1
+	lb $s7,($t5)
+	beq $s7,112,mp #112='p'
+	beq $s7,102,mf #102='f'
+	j continueParse
+mp:
+	addi $t5,$t5,1
+	li $s7,64 #specified MIDI velocity for mp
+	j continueParse
+mf:
+	addi $t5,$t5,1
+	li $s7,80 #specified MIDI velocity for mf
+	j continueParse
+f:
+	addi $t5,$t5,1
+	lb $s7,($t5)
+	beq $s7,102,pp #112='p'
+	li $s7,96 #specified MIDI velocity for f
+	j continueParse
+ff:
+	addi $t5,$t5,1
+	lb $s7,($t5)
+	beq $s7,102,ppp #112='p'
+	li $s7,112 #specified MIDI velocity for ff
+	j continueParse
+fff:
+	addi $t5,$t5,1
+	li $s7,126 #specified MIDI velocity for fff
+	j continueParse
 
 instrumentCommand:
 	addi $t5,$t5,2
