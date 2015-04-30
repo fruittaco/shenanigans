@@ -146,6 +146,26 @@ parsefile:
 	move $t3, $s3
 	move $t5, $s6
 
+#Macro for storing things into the note representation arrays
+#TODO: comment on the convention used here
+.macro storenote
+    sw $v0, ($t0)
+    sw $v1, ($t1)
+    sw $t8, ($t2)
+    sw $s7, ($t3)
+#Increment every one of the array indicators
+    addi $t0, $t0, 4
+    addi $t1, $t1, 4
+    addi $t2, $t2, 4
+    addi $t3, $t3, 4
+.end_macro
+
+.macro nextchar
+        #Step the input position forward
+        addi $t5, $t5, 1
+        lb $t6, ($t5)
+.end_macro
+
 parseloop:
 	addi $s4,$s4,1
 
@@ -154,6 +174,67 @@ parseloop:
         lb $t6, ($t5)
         li $t7, 173
         beq $t6, $t7, parseCommand
+        #Determine if the first character is a '('. If so, must be the start of a chord.
+        li $t7, 40
+        beq $t6, $t7, parseChord
+        j parseNoteDuration
+
+
+parseChord:
+        nextchar #Move past the opening paren
+
+        #Format example: (cw,e,g)
+        #Read the first note and a duration
+        jal parseNote
+        #Take the result from v0 and ensure it's not clobbered
+        move $v1, $v0
+        jal parseDuration
+
+        #Swap the two
+        move $t7, $v0
+        move $v0, $v1
+        move $v1, $t7
+
+        #Now v0 will have notes, v1 will have the constant duration
+        #Store the current channel in $t8 (incremented throughout a chord)
+        li $t8, 1
+        
+chordElement:
+        storenote
+
+        #increment the channel counter
+        addi $t8, $t8, 1
+
+        #If the current character is not a comma, exit
+        li $t7, 44
+        bne $t7, $t6, chordElementExit
+    
+        nextchar
+
+        #Parse a note
+        jal parseNote
+
+        j chordElement
+
+chordElementExit:        
+
+        #Store a rest with the corresponding duration of the notes
+        #NOTE: rests are taken to be a pitch of -1
+        addi $t8, $t8, 1
+        li $v0, -1
+        storenote
+
+        #Move on to the next character
+        addi $t5, $t5, 1
+        lb $t6, ($t5)
+
+        #TODO: assert that the current character is an ending paren
+        j continueParse
+
+
+
+#Parses a note for its pitch based on the array indices as earlier, returns the pitch
+#The new position in the input will be after the parsed pitch
 parseNote:
         #Use the first character [the note] to set the initial pitch (stored in a0)
     	#Subtract and index into the pitch array
@@ -173,7 +254,7 @@ parseNote:
         beq $t6, $t7, parseFlat
         li $t7, 35
         beq $t6, $t7, parseSharp
-        j parseOctaveDuration
+        j parseOctaveMaybe
         
 parseSharp:
         addi $a0, $a0, 1 #Pitch goes up a half step
@@ -181,7 +262,7 @@ parseSharp:
         #Load next character
         addi $t5, $t5, 1
         lb $t6, ($t5)
-        j parseOctaveDuration
+        j parseOctaveMaybe
 parseFlat:
         subi $a0, $a0, 1 #Pitch goes down a half step
         
@@ -189,11 +270,15 @@ parseFlat:
         addi $t5, $t5, 1
         lb $t6, ($t5)
 
-parseOctaveDuration:
+parseOctaveMaybe:
         #Determine if the next character could be a digit. If so, assume it's an octave specifier.
         li $t7, 58
         blt $t6, $t7, parseOctave
-        j parseDuration
+
+        #Otherwise, return with the pitch in $v0
+        move $v0, $a0
+        jr $ra
+
 parseOctave:
         #Load the numerical value of the octave into t7
         subi $t7, $t6, 48
@@ -209,9 +294,13 @@ parseOctave:
         addi $t5, $t5, 1
         lb $t6, ($t5)
 
+        #Return with the pitch in $v0
+        move $v0, $a0
+        jr $ra
+
+#Parses a duration from the input, and returns its length in $v0
 parseDuration:
-        #First, store back all of the pitch information
-    	sw $a0, ($t0)
+        #TODO: support other tempos as well!
 
     	#Subtract and index into the duration array
     	subi $a0, $t6, 97
@@ -221,9 +310,44 @@ parseDuration:
     	lw $a0, ($a0)
     	mul $a0, $a0, $s5 # $s5 is duration in ms of a 1/32nd note
     	sw $a0, ($t1)
-#TODO: Add error detection
+	#TODO: Add error detection
 
-        j continueParse
+        nextchar
+
+
+        #If the next character is a dot, then multiply the duration by 1.5
+        li $s7, 46
+        bne $s7, $s6, parseDurationExit 
+
+        sra $s7, $a0, 1
+        add $a0, $a0, $s7
+        
+        nextchar
+
+parseDurationExit:
+
+        move $v0, $a0
+        jr $ra
+
+parseNoteDuration:
+    jal parseNote
+    move $v1, $v0
+    jal parseDuration
+
+    #Swap v1 and v2
+    move $t7, $v0
+    move $v0, $v1
+    move $v1, $t7
+    
+    #Set the channel to 1
+    li $t8, 1
+    storenote
+
+    #Append a rest with the given duration
+    li $v0, -1
+    storenote
+
+    j continueParse
 
 parseCommand:
     	addi $t5,$t5,1
@@ -332,14 +456,7 @@ setInstrumentLoop:
 	j setInstrumentLoop
 
 continueParse:
-    	#increment output array addresses
-    	addi $t0, $t0, 4
-    	addi $t1, $t1, 4
-
-        #Move on to the next character
-        addi $t5, $t5, 1
-        lb $t6, ($t5)
-
+    	
         #If the next character is nonzero, keep going
     	li $a1, 0
     	bne $t6, $a1, parseloop
