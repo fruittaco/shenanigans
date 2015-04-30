@@ -160,6 +160,12 @@ parsefile:
     addi $t3, $t3, 4
 .end_macro
 
+.macro nextchar
+        #Step the input position forward
+        addi $t5, $t5, 1
+        lb $t6, ($t5)
+.end_macro
+
 parseloop:
 	addi $s4,$s4,1
 
@@ -175,9 +181,7 @@ parseloop:
 
 
 parseChord:
-        #Step the input position forward
-        addi $t5, $t5, 1
-        lb $t6, ($t5)
+        nextchar #Move past the opening paren
 
         #Format example: (cw,e,g)
         #Read the first note and a duration
@@ -205,9 +209,7 @@ chordElement:
         li $t7, 44
         bne $t7, $t6, chordElementExit
     
-        #Step the input position after the comma
-        addi $t5, $t5, 1
-        lb $t6, ($t5)
+        nextchar
 
         #Parse a note
         jal parseNote
@@ -309,9 +311,19 @@ parseDuration:
     	div $a0, $a0, 1		#tempo modifiers
     	mul $a0, $a0, 2
 
-        #Move on to the next character
-        addi $t5, $t5, 1
-        lb $t6, ($t5)
+        nextchar
+
+
+        #If the next character is a dot, then multiply the duration by 1.5
+        li $s7, 46
+        bne $s7, $s6, parseDurationExit 
+
+        sra $s7, $a0, 1
+        add $a0, $a0, $s7
+        
+        nextchar
+
+parseDurationExit:
 
         move $v0, $a0
         jr $ra
