@@ -227,8 +227,54 @@ parseDuration:
         j continueParse
 
 parseCommand:
-    #TODO: Expand!
+    	addi $t5,$t5,1
+	lb $t6,($t5)
+	li $t7, 116 # t
+	beq $t6, $t7, tempoCommand
+	li $t7, 118 # v
+	beq $t6, $t7, volumeCommand
+	li $t7, 116 # t
+	beq $t6, $t7, instrumentCommand
+#TODO: error handling
 
+tempoCommand:
+	addi $t5,$t5,2
+	lb $s5,($t5)
+	subi $s5,$s5,48
+tempoLoop:
+	addi $t5,$t5, 1
+	lb $t8,$t5
+	subi $t8,$t8,48
+	beq $t8,125,continueParse #125=}
+	li $t9, 10
+	mul $s5, $s5, $t9
+	add $s5,$s5,$t8
+	j tempoLoop
+
+volumeCommand:
+
+instrumentCommand:
+	addi $t5,$t5,2
+	lb $s6,($t5)
+	subi $s6,$s6,48
+instrumentLoop:
+	addi $t5,$t5, 1
+	lb $t8,$t5
+	subi $t8,$t8,48
+	beq $t8,125,setInstrument #125=}
+	li $t9, 10
+	mul $s6, $s6, $t9
+	add $s6,$s6,$t8
+	j instrumentLoop
+setInstrument:
+	li $a0, 0
+	li $a1,$s6
+	li $v0, 38
+setInstrumentLoop:
+	beq $a0,10,continueParse
+	syscall
+	addi $a0,$a0,1
+	j setInstrumentLoop
 
 continueParse:
     	#increment output array addresses
