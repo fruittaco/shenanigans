@@ -1,27 +1,32 @@
+#macro to print text to the console
 .macro printtext(%msg)
 la $a0, %msg
 li $v0, 4
 syscall
 .end_macro
 
+#macro to print text to the console from the memory loaction specified by the register
 .macro printtext2(%msg)
 move $a0, %msg
 li $v0, 4
 syscall
 .end_macro
 
+#macro to print an int
 .macro printint(%reg)
 move $a0, %reg
 li $v0, 1
 syscall
 .end_macro
 
+#macro to read an int into destreg
 .macro readint(%destreg)
 li $v0, 5
 syscall
 move %destreg, $v0
 .end_macro
 
+#macro to read a string into the memory location specified by destreg
 .macro readstring(%destreg)
 li $v0, 8
 li $a1, 255
@@ -29,6 +34,7 @@ move $a0, %destreg
 syscall
 .end_macro
 
+#macro to open files for reading
 #NOTE: opens files read-only
 .macro openfile(%filename, %filedescrip)
 move $a0, %filename
@@ -39,6 +45,8 @@ syscall
 move %filedescrip, $v0
 .end_macro
 
+#macro to read file into a string
+#address of string is stored in $v0 after the syscall 
 .macro readfile(%filedescrip, %inputbuf, %numchars)
 move $a0, %filedescrip
 move $a1, %inputbuf
@@ -47,12 +55,14 @@ li $v0, 14
 syscall
 .end_macro
 
+#macro to close a file
 .macro closefile(%filedescrip)
 move $a0, %filedescrip
 li $v0, 16
 syscall
 .end_macro
 
+#allocates memory with a given size, storing the adress in the register ptr
 .macro malloc(%size, %ptr)
 move $a0, %size
 li $v0, 9
@@ -79,16 +89,21 @@ main:
     	invalidfilemsg: .asciiz "Invalid file name, please try again\n"
 
     	#Provides a list of pitches [indexed from a]
-        #TODO: MAKE a be A4. Otherwise, inconsistent results will be obtained
-    	#		 A4  B4  C5  D5  E5  F5  G5  A4b B4b D5b E5b G5b                                                             A3  B3  C4  D4  E4  F4  G4  A3b B3b D4b E4b G4b A2  C3# D3  E3  F3  C3  G3
-    	pitchlist: .word 69, 71, 72, 74, 76, 77, 79, 68, 70, 73, 75, 78, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 57, 59, 60, 62, 64, 65, 67, 56, 58, 61, 63, 66, 45, 49, 50, 52, 53, 48, 55
-    	#		 A   B   C   D   E   F   G   H   I   J   K   L   M  N  O  P  Q  R  S  T  U  V  W  X  Y  Z                    a   b   c   d   e   f   g   h   i   j   k   l   m   n   o   p   q   r   s
-    	durationlist: .word 0, 0, 0, 0, 125, 0, 0, 500, 0, 0, 0, 0, 0, 0, 0 ,0, 250, 60, 60, 30, 0, 0, 1000, 0, 0, 0
+    	#		 A5  B5  C5  D5  E5  F5  G5  A4b B4b D5b E5b G5b                                                             A4  B4  C4  D4  E4  F4  G4  A3b B3b D4b E4b G4b A2  C3# D3  E3  F3  C3  G3	 A3  B3
+    	pitchlist: .word 81, 83, 72, 74, 76, 77, 79, 68, 70, 73, 75, 78, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 69, 71, 60, 62, 64, 65, 67, 56, 58, 61, 63, 66, 45, 49, 50, 52, 53, 48, 55, 57, 59
+    	#		 A   B   C   D   E   F   G   H   I   J   K   L   M  N  O  P  Q  R  S  T  U  V  W  X  Y  Z                    a   b   c   d   e   f   g   h   i   j   k   l   m   n   o   p   q   r   s   t   u
+    	
+	durationlist: .word 0, 0, 0, 0, 4, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0 ,0, 8, 2, 2, 1, 0, 0, 32, 0, 0, 0
+	#		    a  b  c  d  e  f  g  h   i  j  k  l  m  n  o  p  q  r  s  t  u  v  w   x  y  z
+
     	#TODO: add in a help file or something
 
     	.text
+	#print welcome and ask for a file name
     	printtext(welcomemsg)
 	printtext(filemsg)
+	#attempt to open file.
+	#if error msg, reprompt user, else proceed
 tryAgain:
 	li $a0, 255
 	malloc($a0, $s5)
@@ -108,6 +123,7 @@ loop:
     	printtext(invalidfilemsg)
 	j tryAgain
 goodFile:
+	# read file and prep for loading note arrays
 	li $t0,1000 # max number of notes
 	div $a0,$t0,2
 	mul $t1,$t0,2
@@ -321,8 +337,54 @@ parseNoteDuration:
     j continueParse
 
 parseCommand:
-    #TODO: Expand!
+    	addi $t5,$t5,1
+	lb $t6,($t5)
+	li $t7, 116 # t
+	beq $t6, $t7, tempoCommand
+	li $t7, 118 # v
+	beq $t6, $t7, volumeCommand
+	li $t7, 116 # t
+	beq $t6, $t7, instrumentCommand
+#TODO: error handling
 
+tempoCommand:
+	addi $t5,$t5,2
+	lb $s5,($t5)
+	subi $s5,$s5,48
+tempoLoop:
+	addi $t5,$t5, 1
+	lb $t8,$t5
+	subi $t8,$t8,48
+	beq $t8,125,continueParse #125=}
+	li $t9, 10
+	mul $s5, $s5, $t9
+	add $s5,$s5,$t8
+	j tempoLoop
+
+volumeCommand:
+
+instrumentCommand:
+	addi $t5,$t5,2
+	lb $s6,($t5)
+	subi $s6,$s6,48
+instrumentLoop:
+	addi $t5,$t5, 1
+	lb $t8,$t5
+	subi $t8,$t8,48
+	beq $t8,125,setInstrument #125=}
+	li $t9, 10
+	mul $s6, $s6, $t9
+	add $s6,$s6,$t8
+	j instrumentLoop
+setInstrument:
+	li $a0, 0
+	li $a1,$s6
+	li $v0, 38
+setInstrumentLoop:
+	beq $a0,10,continueParse
+	syscall
+	addi $a0,$a0,1
+	j setInstrumentLoop
 
 continueParse:
     	
@@ -332,15 +394,19 @@ continueParse:
 
 playNotes: 
 	ble $s4, 0, end	#$s4 is the number of notes remaining to be played
-	lw $a0, ($s0)	#pitch
-	lw $a1, ($s1)	#duration (ms)
-	li $a2, 0	#instrument (currently hard-coded to grand piano, final version may implement multiple insturments, stored in $s2)
-	li $a3, 100	#volume (will be adjustable in final version, stored in $s3)
-	li $v0, 31
+	lw $a0, ($s0)	# pitch
+	lw $a1, ($s1)	# duration (ms)
+	li $a2, ($s2)	# channel
+	li $a3, ($s3)	# volume
+	bltz $a0, playRest
+	li $v0, 37
 	syscall		#play the note
+	j increment
+playRest:
 	lw $a0, ($s1)
 	li $v0, 32
 	syscall
+increment:
 	add $s0, $s0, 4	#increment array indices
 	add $s1, $s1, 4
 	add $s2, $s2, 4
