@@ -95,6 +95,7 @@ main:
     	
 	durationlist: .word 0, 0, 0, 0, 125, 0, 0, 500, 0, 0, 0, 0, 0, 0, 0 ,0, 250, 60, 60, 30, 0, 0, 1000, 0, 0, 0
 	#		    a  b  c  d   e   f  g   h   i  j  k  l  m  n  o  p   q   r   s   t   u  v   w    x  y  z
+
     	#TODO: add in a help file or something
 
     	.text
@@ -147,23 +148,73 @@ parsefile:
 
 parseloop:
 	addi $s4,$s4,1
-    	#Read in the pitch
-    	lb $t6, ($t5)
 
-    	#Read in the duration
-    	lb $t7, 1($t5)
-
+        #Determine if the first character is a '{'. If so, must be a command terminated with '}'.
+        #Otherwise, must be dealing with a note
+        lb $t6, ($t5)
+        li $t7, 173
+        beq $t6, $t7, parseCommand
+parseNote:
+        #Use the first character [the note] to set the initial pitch (stored in a0)
     	#Subtract and index into the pitch array
+
     	subi $a0, $t6, 65
     	mul $a0,$a0,4
     	la $a1, pitchlist
     	add $a0, $a1, $a0
     	lw $a0, ($a0)
+
+        #Move on to the next character
+        addi $t5, $t5, 1
+        lb $t6, ($t5)
+
+        #Determine if a sharp or flat character exists at the next position
+        li $t7, 98
+        beq $t6, $t7, parseFlat
+        li $t7, 35
+        beq $t6, $t7, parseSharp
+        j parseOctaveDuration
+        
+parseSharp:
+        addi $a0, $a0, 1 #Pitch goes up a half step
+        
+        #Load next character
+        addi $t5, $t5, 1
+        lb $t6, ($t5)
+        j parseOctaveDuration
+parseFlat:
+        subi $a0, $a0, 1 #Pitch goes down a half step
+        
+        #Load next character
+        addi $t5, $t5, 1
+        lb $t6, ($t5)
+
+parseOctaveDuration:
+        #Determine if the next character could be a digit. If so, assume it's an octave specifier.
+        li $t7, 58
+        blt $t6, $t7, parseOctave
+        j parseDuration
+parseOctave:
+        #Load the numerical value of the octave into t7
+        subi $t7, $t6, 48
+        #Calculate the octave's offset relative to the default octave (centered on c4)
+        subi $t7, $t7, 4
+        #Multiply to obtain an offset in half-steps
+        li $t6, 12
+        mul $t7, $t7, $t6
+        #add the result to the pitch
+        add $a0, $t7, $a0
+
+        #Move on to the next character
+        addi $t5, $t5, 1
+        lb $t6, ($t5)
+
+parseDuration:
+        #First, store back all of the pitch information
     	sw $a0, ($t0)
-#TODO: Add error detection
 
     	#Subtract and index into the duration array
-    	subi $a0, $t7, 97
+    	subi $a0, $t6, 97
     	mul $a0,$a0,4
     	la $a1, durationlist
     	add $a0, $a1, $a0
@@ -173,16 +224,25 @@ parseloop:
     	sw $a0, ($t1)
 #TODO: Add error detection
 
+        j continueParse
+
+parseCommand:
+    #TODO: Expand!
+
+
+continueParse:
     	#increment output array addresses
     	addi $t0, $t0, 4
     	addi $t1, $t1, 4
 
-    	#increment input position
-    	addi $t5, $t5, 2
-    
-    	lb $a0, -1($t5)
+        #Move on to the next character
+        addi $t5, $t5, 1
+        lb $t6, ($t5)
+
+        #If the next character is nonzero, keep going
     	li $a1, 0
-    	bne $a0, $a1, parseloop
+    	bne $t6, $a1, parseloop
+
 playNotes: 
 	ble $s4, 0, end	#$s4 is the number of notes remaining to be played
 	lw $a0, ($s0)	# pitch
