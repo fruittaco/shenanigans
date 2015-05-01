@@ -89,7 +89,7 @@ playConsole:
 	lb $t2, exitstring
 	beq $t2, $t1, startScreen
 	move $s6, $t0
-	li $t0, 1000
+	li $t0, 10000
 	j allocateMemory
 	#play music from a loaded file
 playFile:
@@ -136,7 +136,7 @@ loop:
 	j tryAgain
 goodFile:
 	# read file and prep for loading note arrays
-	li $t0,1000 # max number of notes
+	li $t0,10000 # max number of notes
 	li $t7,2
 	div $a0,$t0,$t7
 	mul $t1,$t0,$t7
