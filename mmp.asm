@@ -55,17 +55,9 @@ startScreen:
         la $a0, welcomemsg
         jal printtext
 menuInput:
-	#Read menu input from a STRING
-	#Allocate 256 bytes for the string
-	li $a0, 256
-	jal malloc
-	#Read it from user input
+	li $v0, 5
+	syscall
 	move $t0, $v0
-	move $a0, $t0
-	jal readstring
-	#Compute numerical value of first character and store in t0
-	lb $a0, ($a0)
-	subi $t0, $a0, 48
 
    	beq $t0, 1, playFile
    	beq $t0, 2, playConsole
@@ -90,7 +82,7 @@ playConsole:
 	lb $t2, exitstring
 	beq $t2, $t1, startScreen
 	move $s6, $t0
-	li $t0, 10000
+	li $t0, 1000
 	j allocateMemory
 	#play music from a loaded file
 playFile:
@@ -137,7 +129,7 @@ loop:
 	j tryAgain
 goodFile:
 	# read file and prep for loading note arrays
-	li $t0,10000 # max number of notes
+	li $t0,1000 # max number of notes
 	li $t7,2
 	div $a0,$t0,$t7
 	mul $t1,$t0,$t7
@@ -288,19 +280,6 @@ chordElementExit:
 #Parses a note for its pitch based on the array indices as earlier, returns the pitch
 #The new position in the input will be after the parsed pitch
 parseNote:
-
-	#First, handle the special case that the note is actually a rest [pitch -1]
-	bne $t6, 114, parseNoteContinue
-
-	#Load next character
-        addi $t5, $t5, 1
-        lb $t6, ($t5)
-	#Return -1
-	li $v0, -1
-	jr $ra
-
-parseNoteContinue:
-
         #Use the first character [the note] to set the initial pitch (stored in a0)
     	#Subtract and index into the pitch array
 
@@ -513,21 +492,21 @@ instrumentLoop:
 	addi $t5,$t5, 1
 	lb $t8,($t5)
 	subi $t8,$t8,48
-	beq $t8,77,setInstrument #125=}
+	beq $t8,77,insertInstrumentChange #125=}
 	li $t9, 10
 	mul $s6, $s6, $t9
 	add $s6,$s6,$t8
 	j instrumentLoop
-setInstrument:
-	subi $s6,$s6,1
-	li $a0, 0
-	move $a1,$s6
-	li $v0, 38
-setInstrumentLoop:
-	beq $a0,10,endCommand
-	syscall
-	addi $a0,$a0,1
-	j setInstrumentLoop
+insertInstrumentChange:
+	subi $s6,$s6,1	#convert from MIDI to mars specification
+	li $v0,-2
+	sw $v0, ($t0)
+    	sw $s6, ($t1)
+   	#Increment every one of the array indicators
+    	addi $t0, $t0, 4
+    	addi $t1, $t1, 4
+    	addi $t2, $t2, 4
+    	addi $t3, $t3, 4
 
 endCommand:
 	#Skip past the ending curly brace
@@ -544,16 +523,17 @@ continueParse:
 playNotes: 
 	lw $s4,($s0)
 	beqz $s4, endPlay	#if pitch is zero, no more notes
-	ble $s4, -2, endPlay
+	ble $s4, -3, endPlay
 	bge $s4, 109, endPlay
 	lw $s4, ($s1)	#long duration also signals end
-	bge $s4, 1000, endPlay
+	bge $s4, 10000, endPlay
 	ble $s4, -1, endPlay
 	lw $a0, ($s0)	# pitch
 	lw $a1, ($s1)	# duration (ms)
 	lw $a2, ($s2)	# channel
 	lw $a3, ($s3)	# volume
-	bltz $a0, playRest
+	beq $a0, -1, playRest
+	beq $a0, -2, instrumentChange
 	li $v0, 37
 	syscall		#play the note
 	j increment
@@ -561,6 +541,15 @@ playRest:
 	lw $a0, ($s1)
 	li $v0, 32
 	syscall
+	j increment
+instrumentChange:
+	li $a0, 0
+	li $v0, 38
+setInstrumentLoop:
+	beq $a0,10,increment
+	syscall
+	addi $a0,$a0,1
+	j setInstrumentLoop
 increment:
 	add $s0, $s0, 4	#increment array indices
 	add $s1, $s1, 4
