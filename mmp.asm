@@ -69,6 +69,7 @@ menuInput:
         jal printtext
    	j menuInput
 playConsole:
+
 	li $t4, 2	
         la $a0, consolemsg
         jal printtext
@@ -84,6 +85,7 @@ playConsole:
 	lb $t2, exitstring
 	beq $t2, $t1, startScreen
 	move $s6, $t0
+	li $t0, 1000
 	j allocateMemory
 playFile:
 	li $t4, 1
@@ -254,7 +256,7 @@ chordElement:
         jal nextchar
 
         #Parse a note
-        jal parseNote
+	jal parseNote
 
         j chordElement
 
@@ -316,7 +318,13 @@ parseFlat:
 parseOctaveMaybe:
         #Determine if the next character could be a digit. If so, assume it's an octave specifier.
         li $t7, 58
-        blt $t6, $t7, parseOctave
+        blt $t6, $t7, parseOctaveMaybeTwo
+	j noOctave
+parseOctaveMaybeTwo:
+	li $t7, 47
+	bgt $t6, $t7, parseOctave
+	j noOctave
+noOctave:
 
         #Otherwise, return with the pitch in $v0
         move $v0, $a0
