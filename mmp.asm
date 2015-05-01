@@ -218,7 +218,7 @@ parsecontinue:
 
         #Determine if the first character is a '{'. If so, must be a command terminated with '}'.
         #Otherwise, must be dealing with a note
-        li $t7, 173
+        li $t7, 123
         beq $t6, $t7, parseCommand
         #Determine if the first character is a '('. If so, must be the start of a chord.
         li $t7, 40
