@@ -4,7 +4,7 @@ Instructions for the Shenanigans Music Player
 can be read from a file or entered into the command console of the MARS++ simulator. MARS++ can be downloaded
 from http://karnbianco.co.uk/blog/2010/11/12/mips-assembly-music-sequencer/. Starting the player will ask for
 a format you want to read music from. Once you select your format, you will be prompted for a file name or a
-string of music. Music is written as successive notes and commands (seperated by spaces and/or newlines)
+string of music. Music is written as successive notes and commands (which can be seperated by spaces and/or newlines)
 The format for music is as follows:
 
 Note format:
@@ -19,7 +19,7 @@ Note format:
 		sharp character- #
 		Optional character which will augment the pitch by a half step (up for #, down for b)
 	<note octave>
-		Optional character declaring the note's octave (defaults to 4). Note that an uppercase
+		Optional character declaring the note's octave (defaults to 4 if not specified). Note that an uppercase
 		letter for note pitch will add 1 to this value. For reference, "middle C" on a piano is
 		octave 4.
 	<note duration>
