@@ -25,7 +25,6 @@ jr $ra
 #and number of characters in the string is in $s6
 #t0-3 are the locations into it
 #Reads in a list of pitch, duration pairs
-#Has
 
 .globl main
 
@@ -50,8 +49,6 @@ main:
 	durationlist: .word 0, 0, 0, 0, 4, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0 ,0, 8, 2, 2, 1, 0, 0, 32, 0, 0, 0
 	#		    a  b  c  d  e  f  g  h   i  j  k  l  m  n  o  p  q  r  s  t  u  v  w   x  y  z
 
-    	#TODO: add in a help file or something
-
     	.text
 	#print welcome and ask for a playback type
 startScreen: 
@@ -68,9 +65,9 @@ menuInput:
         la $a0, invalidmenuchoice
         jal printtext
    	j menuInput
+	#play music line entered into the console window
 playConsole:
-
-	li $t4, 2	
+	li $t4, 2 #marks playing from console
         la $a0, consolemsg
         jal printtext
 	li $a0, 255
@@ -87,8 +84,9 @@ playConsole:
 	move $s6, $t0
 	li $t0, 1000
 	j allocateMemory
+	#play music from a loaded file
 playFile:
-	li $t4, 1
+	li $t4, 1 #marks playing from file
         la $a0, filemsg
         jal printtext
 	#attempt to open file.
@@ -542,6 +540,7 @@ increment:
 	add $s3, $s3, 4
 	sub $s4, $s4, 1
 	j playNotes
+	#return to whatever play menu we were on
 endPlay:	
 	beq $t4, 1, playFile
 	beq $t4, 2, playConsole
