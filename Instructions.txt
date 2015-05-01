@@ -50,6 +50,7 @@ Chord format:
 	<pitch>
 		Just the pitch of a note. This corresonds to <note pitch><*flat or charp><*note octave>
 		in the note format.
+	Note: spaces are not permitted within a chord.
 	Examples
 		(E4h,Ab4,B4)
 		An E major chord played in the 5th octave played for a half note.
