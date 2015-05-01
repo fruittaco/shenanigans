@@ -55,9 +55,17 @@ startScreen:
         la $a0, welcomemsg
         jal printtext
 menuInput:
-	li $v0, 5
-	syscall
+	#Read menu input from a STRING
+	#Allocate 256 bytes for the string
+	li $a0, 256
+	jal malloc
+	#Read it from user input
 	move $t0, $v0
+	move $a0, $t0
+	jal readstring
+	#Compute numerical value of first character and store in t0
+	lb $a0, ($a0)
+	subi $t0, $a0, 48
 
    	beq $t0, 1, playFile
    	beq $t0, 2, playConsole
@@ -539,7 +547,7 @@ playNotes:
 	ble $s4, -2, endPlay
 	bge $s4, 109, endPlay
 	lw $s4, ($s1)	#long duration also signals end
-	bge $s4, 10000, endPlay
+	bge $s4, 1000, endPlay
 	ble $s4, -1, endPlay
 	lw $a0, ($s0)	# pitch
 	lw $a1, ($s1)	# duration (ms)

@@ -35,4 +35,4 @@ e2e (e2e,e3) (e2e,a4) (e2e,e4) (e2e,b4) (e2e,a4) (e2e,g#4) (e2e,a4)
 
 d#2e (d#2e,d#3) (d#2e,f#5) (d#2e,d#5) (d#2e,b5) (d#2e,a5) (d#2e,f#5) (d#2e,d#5)
 
-d3e d2e f#4e a4e f#4e f#3e f#2e f#2e
+d3e d2e f#4e a4e f#4e f#3e f#2e f#2e 
