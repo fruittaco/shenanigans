@@ -42,7 +42,7 @@ Note format:
 			A whole rest
 
 Chord format:
-	(<full note>, <pitch>, ..., <pitch>)
+	(<full note>,<pitch>,...,<pitch>) notes should not be separated by whitespace
 	
 	<full note>
 		A note written according to the above note format. This duration will be the duration of
@@ -51,7 +51,7 @@ Chord format:
 		Just the pitch of a note. This corresonds to <note pitch><*flat or charp><*note octave>
 		in the note format.
 	Examples
-		(E4h, Ab4, B4)
+		(E4h,Ab4,B4)
 		An E major chord played in the 5th octave played for a half note.
 
 Command format:
@@ -69,6 +69,7 @@ Command format:
 			ppp
 			pp
 			p
+			mp
 			mf
 			f
 			ff
