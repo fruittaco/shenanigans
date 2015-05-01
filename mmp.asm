@@ -166,6 +166,8 @@ allocateMemory:
 
         #Initialize counter for number of characters
     	move $s4,$0
+	li $s5, 83
+	li $s7, 80
 parsefile:
 	move $t0, $s0
 	move $t1, $s1
@@ -196,8 +198,6 @@ nextchar:
 parseloop:
 	addi $s4,$s4,1
         lb $t6, ($t5)
-	li $s5, 21
-	li $s7, 80
 
 whitespacehandler:
         #Skip any number of newlines and spaces
@@ -217,7 +217,7 @@ parsecontinue:
 
         #Determine if the first character is a '{'. If so, must be a command terminated with '}'.
         #Otherwise, must be dealing with a note
-        li $t7, 173
+        li $t7, 123
         beq $t6, $t7, parseCommand
         #Determine if the first character is a '('. If so, must be the start of a chord.
         li $t7, 40
@@ -367,11 +367,10 @@ parseDuration:
 
 
         #If the next character is a dot, then multiply the duration by 1.5
-        li $s7, 46
-        bne $s7, $s6, parseDurationExit 
+        bne $s6,46,parseDurationExit 
 
-        sra $s7, $a0, 1
-        add $a0, $a0, $s7
+        sra $t7, $a0, 1
+        add $a0, $a0, $t7
         
         #Load next character
         addi $t5, $t5, 1
@@ -409,8 +408,9 @@ parseCommand:
 	beq $t6, $t7, tempoCommand
 	li $t7, 118 # v
 	beq $t6, $t7, volumeCommand
-	li $t7, 116 # t
+	li $t7, 105 # i
 	beq $t6, $t7, instrumentCommand
+	lw $t1,-1
 
 tempoCommand:
 	addi $t5,$t5,2
@@ -470,13 +470,13 @@ mf:
 f:
 	addi $t5,$t5,1
 	lb $s7,($t5)
-	beq $s7,102,pp #112='p'
+	beq $s7,102,ff #112='p'
 	li $s7,96 #specified MIDI velocity for f
 	j endCommand
 ff:
 	addi $t5,$t5,1
 	lb $s7,($t5)
-	beq $s7,102,ppp #112='p'
+	beq $s7,102,fff #112='p'
 	li $s7,112 #specified MIDI velocity for ff
 	j endCommand
 fff:
@@ -504,7 +504,6 @@ setInstrument:
 	li $v0, 38
 setInstrumentLoop:
 	beq $a0,10,endCommand
-	li $v0, 38
 	syscall
 	addi $a0,$a0,1
 	j setInstrumentLoop

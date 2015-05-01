@@ -1,4 +1,4 @@
-{t=70} {i=25} (C#s, E, B) (C#s, E, B) (C#s, E, B) (C#s, E) (C#s, E) (C#s, E) (C#s, E, G#) (C#s, E, G#) (C#s, E, G#) (C#s, E) (C#s, E) (C#s, E) 
-(Gs, C#, E) (Gs, C#, E) (Gs, C#, E) (Gs, C#, E) (Gs, C#, E) (Gs, C#, E) (Gs, C#, E) (Gs, C#, E) (Gs, C#, E) (Gs, C#, E) (Gs, C#, E) (Gs, C#, E) (Gs, C#, E) (Gs, C#, E) (Gs, C#, E) (Gs, C#, E)
-(C#s, E, B) (C#s, E, B) (C#s, E, B) (C#s, E) (C#s, E) (C#s, E) (C#s, E, G#) (C#s, E, G#) (C#s, E, G#) (C#s, E) (C#s, E) (C#s, E) 
-(Gs, C#, E) (Gs, C#, E) (Gs, C#, E) (Gs, C#, E) (Gs, C#, E) (Gs, C#, E) (Gs, C#, E) (Gs, C#, E) (Gs, C#, E) (Gs, C#, E) (Gs, C#, E) (Gs, C#, E)
+{t=70}{i=25}(C#s,E,B)(C#s,E,B)(C#s,E,B)(C#s,E)(C#s,E)(C#s,E)(C#s,E,G#)(C#s,E,G#)(C#s,E,G#)(C#s,E)(C#s,E)(C#s,E)
+(Gs,C#,E)(Gs,C#,E)(Gs,C#,E)(Gs,C#,E)(Gs,C#,E)(Gs,C#,E)(Gs,C#,E)(Gs,C#,E)(Gs,C#,E)(Gs,C#,E)(Gs,C#,E)(Gs,C#,E)(Gs,C#,E)(Gs,C#,E)(Gs,C#,E)(Gs,C#,E)
+(C#s,E,B)(C#s,E,B)(C#s,E,B)(C#s,E)(C#s,E)(C#s,E)(C#s,E,G#)(C#s,E,G#)(C#s,E,G#)(C#s,E)(C#s,E)(C#s,E)
+(Gs,C#,E)(Gs,C#,E)(Gs,C#,E)(Gs,C#,E)(Gs,C#,E)(Gs,C#,E)(Gs,C#,E)(Gs,C#,E)(Gs,C#,E)(Gs,C#,E)(Gs,C#,E)(Gs,C#,E)
