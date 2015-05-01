@@ -175,7 +175,6 @@ parsefile:
         j parseloop
 
 #Function for storing things into the note representation arrays
-#Convention: t0, s0 - pitch, t1, s1 - duration t2,s2 - channel t3,s3 - volume
 storenote:
     sw $v0, ($t0)
     sw $v1, ($t1)
@@ -421,13 +420,13 @@ tempoLoop:
 	addi $t5,$t5, 1
 	lb $t8,($t5)
 	subi $t8,$t8,48
-	beq $t8,125,finishTempo #125=}
+	beq $t8,77,finishTempo #125=}
 	li $t9, 10
 	mul $s5, $s5, $t9
 	add $s5,$s5,$t8
 	j tempoLoop
 finishTempo:		# $s5 is now beats/min
-	li $t8,1875	# 60000ms/32 1/32beats
+	li $t8,7500	# 60000ms/32 1/32beats
 	div $s5,$t8,$s5	# $s5 is now ms/32nd note
 	j endCommand
 
@@ -493,7 +492,7 @@ instrumentLoop:
 	addi $t5,$t5, 1
 	lb $t8,($t5)
 	subi $t8,$t8,48
-	beq $t8,125,setInstrument #125=}
+	beq $t8,77,setInstrument #125=}
 	li $t9, 10
 	mul $s6, $s6, $t9
 	add $s6,$s6,$t8
@@ -505,6 +504,7 @@ setInstrument:
 	li $v0, 38
 setInstrumentLoop:
 	beq $a0,10,endCommand
+	li $v0, 38
 	syscall
 	addi $a0,$a0,1
 	j setInstrumentLoop
