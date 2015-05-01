@@ -175,7 +175,7 @@ parsefile:
         j parseloop
 
 #Function for storing things into the note representation arrays
-#TODO: comment on the convention used here
+#Convention: t0, s0 - pitch, t1, s1 - duration t2,s2 - channel t3,s3 - volume
 storenote:
     sw $v0, ($t0)
     sw $v1, ($t1)
@@ -274,7 +274,6 @@ chordElementExit:
         addi $t5, $t5, 1
         lb $t6, ($t5)
 
-        #TODO: assert that the current character is an ending paren
         j continueParse
 
 
@@ -353,7 +352,6 @@ parseOctave:
 
 #Parses a duration from the input, and returns its length in $v0
 parseDuration:
-        #TODO: support other tempos as well!
 
     	#Subtract and index into the duration array
     	subi $a0, $t6, 97
@@ -363,7 +361,6 @@ parseDuration:
     	add $a0, $a1, $a0
     	lw $a0, ($a0)
     	mul $a0, $a0, $s5 # $s5 is duration in ms of a 1/32nd note
-	#TODO: Add error detection
 
         #Load next character
         addi $t5, $t5, 1
@@ -415,7 +412,6 @@ parseCommand:
 	beq $t6, $t7, volumeCommand
 	li $t7, 116 # t
 	beq $t6, $t7, instrumentCommand
-#TODO: error handling
 
 tempoCommand:
 	addi $t5,$t5,2
@@ -433,7 +429,7 @@ tempoLoop:
 finishTempo:		# $s5 is now beats/min
 	li $t8,1875	# 60000ms/32 1/32beats
 	div $s5,$t8,$s5	# $s5 is now ms/32nd note
-	j continueParse
+	j endCommand
 
 volumeCommand:
 	addi $t5,$t5,2
@@ -441,53 +437,53 @@ volumeCommand:
 	beq $s7,112,p #112='p'
 	beq $s7,109,m #109='m'
 	beq $s7,102,f #102='f'
-	j continueParse
+	j endCommand
 p:
 	addi $t5,$t5,1
 	lb $s7,($t5)
 	beq $s7,112,pp #112='p'
 	li $s7,49 #specified MIDI velocity for p
-	j continueParse
+	j endCommand
 pp:
 	addi $t5,$t5,1
 	lb $s7,($t5)
 	beq $s7,112,ppp #112='p'
 	li $s7,33 #specified MIDI velocity for pp
-	j continueParse
+	j endCommand
 ppp:
 	addi $t5,$t5,1
 	li $s7,16 #specified MIDI velocity for ppp
-	j continueParse
+	j endCommand
 m:
 	addi $t5,$t5,1
 	lb $s7,($t5)
 	beq $s7,112,mp #112='p'
 	beq $s7,102,mf #102='f'
-	j continueParse
+	j endCommand
 mp:
 	addi $t5,$t5,1
 	li $s7,64 #specified MIDI velocity for mp
-	j continueParse
+	j endCommand
 mf:
 	addi $t5,$t5,1
 	li $s7,80 #specified MIDI velocity for mf
-	j continueParse
+	j endCommand
 f:
 	addi $t5,$t5,1
 	lb $s7,($t5)
 	beq $s7,102,pp #112='p'
 	li $s7,96 #specified MIDI velocity for f
-	j continueParse
+	j endCommand
 ff:
 	addi $t5,$t5,1
 	lb $s7,($t5)
 	beq $s7,102,ppp #112='p'
 	li $s7,112 #specified MIDI velocity for ff
-	j continueParse
+	j endCommand
 fff:
 	addi $t5,$t5,1
 	li $s7,126 #specified MIDI velocity for fff
-	j continueParse
+	j endCommand
 
 instrumentCommand:
 	addi $t5,$t5,2
@@ -508,10 +504,16 @@ setInstrument:
 	move $a1,$s6
 	li $v0, 38
 setInstrumentLoop:
-	beq $a0,10,continueParse
+	beq $a0,10,endCommand
 	syscall
 	addi $a0,$a0,1
 	j setInstrumentLoop
+
+endCommand:
+	#Skip past the ending curly brace
+	jal nextchar
+	#Keep calm and parse
+	j continueParse
 
 continueParse:
     	
@@ -520,7 +522,13 @@ continueParse:
     	bne $t6, $a1, parseloop
 
 playNotes: 
-	ble $s4, $0, endPlay	#$s4 is the number of notes remaining to be played
+	lw $s4,($s0)
+	beqz $s4, endPlay	#if pitch is zero, no more notes
+	ble $s4, -2, endPlay
+	bge $s4, 109, endPlay
+	lw $s4, ($s1)	#long duration also signals end
+	bge $s4, 10000, endPlay
+	ble $s4, -1, endPlay
 	lw $a0, ($s0)	# pitch
 	lw $a1, ($s1)	# duration (ms)
 	lw $a2, ($s2)	# channel
