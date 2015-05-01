@@ -518,8 +518,13 @@ continueParse:
     	bne $t6, $a1, parseloop
 
 playNotes: 
-	ble $s4, $0, end	#$s4 is the number of notes remaining to be played
+	lw $s4,($s0)
+	beqz $s4, end	#if pitch is zero, no more notes
+	lw $s4, ($s1)	#long duration also signals end
+	bge $s4, 10000, end
 	lw $a0, ($s0)	# pitch
+	li $v0,1
+	syscall
 	lw $a1, ($s1)	# duration (ms)
 	lw $a2, ($s2)	# channel
 	lw $a3, ($s3)	# volume
