@@ -425,7 +425,7 @@ tempoLoop:
 	addi $t5,$t5, 1
 	lb $t8,($t5)
 	subi $t8,$t8,48
-	beq $t8,125,finishTempo #125=}
+	beq $t8,77,finishTempo #125=}
 	li $t9, 10
 	mul $s5, $s5, $t9
 	add $s5,$s5,$t8
@@ -497,7 +497,7 @@ instrumentLoop:
 	addi $t5,$t5, 1
 	lb $t8,($t5)
 	subi $t8,$t8,48
-	beq $t8,125,setInstrument #125=}
+	beq $t8,77,setInstrument #125=}
 	li $t9, 10
 	mul $s6, $s6, $t9
 	add $s6,$s6,$t8
@@ -509,6 +509,7 @@ setInstrument:
 	li $v0, 38
 setInstrumentLoop:
 	beq $a0,10,endCommand
+	li $v0, 38
 	syscall
 	addi $a0,$a0,1
 	j setInstrumentLoop
