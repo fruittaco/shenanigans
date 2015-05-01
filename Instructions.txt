@@ -41,16 +41,29 @@ Note format:
 		rw
 			A whole rest
 
+Chord format:
+	(<full note>, <pitch>, ..., <pitch>)
+	
+	<full note>
+		A note written according to the above note format. This duration will be the duration of
+		the entire chord.
+	<pitch>
+		Just the pitch of a note. This corresonds to <note pitch><*flat or charp><*note octave>
+		in the note format.
+	Examples
+		(E4h, Ab4, B4)
+		An E major chord played in the 5th octave played for a half note.
+
 Command format:
-	<char>=<value>
+	{<char>=<value>}
 
 	Set tempo command
-		t=<tempo>
+		{t=<tempo>}
 		Sets the tempo to the integer <tempo>. <tempo> should represent the speed of the music in
 		beats per minute, assuming a quarter note is one beat. The default starting tempo is 90
 		beats per minute.
 	Set volume command
-		v=<dynamic>
+		{v=<dynamic>}
 		Sets the volume to the string <dynamic>. <dynamic> is as string representing the volume of
 		the music. In order of increasing voulme, the supported dynamics are:
 			ppp
@@ -62,14 +75,14 @@ Command format:
 			fff
 		The default starting dynamic is mf.
 	Set instrument command
-		i=<instr>
+		{i=<instr>}
 		Sets the instrument to the one specified by the integer <instr>. For a list of instruments
 		and there corresponding values go to http://www.midi.org/techspecs/gm1sound.php. The default
 		starting instrument is acoustic grand piano.
 	Examples
-		t=120
+		{t=120}
 			Set tempo to 120 beats per minute (quarter note = 120)
-		v=ff
+		{v=ff}
 			Set volume to ff (fortissimo)
-		i=71
+		{i=71}
 			Set instrument to basson.
