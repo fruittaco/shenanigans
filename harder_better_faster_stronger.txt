@@ -1,3 +1,115 @@
-{t=120}{v=fff}
+{t=200}{v=fff}
 b1e (b2e,b3,d#) b2e b2s b2s a2s rs 
 (b2e,b3,d#) b2e b2s b2s a2s rs 
+(b2e,b3,d#) b2e b2s b2s a2s rs 
+(b2e,b3,d#) b2e b2s b2s a2s
+d2e b2e d2e b2e d2e b2e d2e b2e d2e b2e d2e b2e d2e b2e d2e b2e
+b1e (b2e,b3,d#) b2e b2s b2s a2s rs 
+(b2e,b3,d#) b2e b2s b2s a2s rs 
+(b2e,b3,d#) b2e b2s b2s a2s rs 
+(b2e,b3,d#) b2e b2s b2s a2s
+d2e b2e d2e b2e d2e b2e d2e b2e d2e b2e d2e b2e
+
+e2e f#2e c#2e e2e
+
+f#2e (f#3e,c#,g#) f#2e f#3e e2e (e3e,e4,a4,b4) e2e e3e d2e (d3e,c#4,g#4,c#5) (d2s,f#4,b4) (d2s,e4,a4) d3s c#2e
+(c#3e,f#4,c#5,e,f#5) c#2e c#3e 
+(b2e,c#5,e5) d3s d#5s d5s (b2e,a4,c#5) b3e b2e b3e b2s (b2s,c#5,e5) (b2s,a4,c#5) 
+(b2e,c#5,e5) d3s d#5s d5s (b2e,a4,c#5) b3e (b2e,c#4,e4,f#4,a4) b3e b2e b3e 
+
+f#2e (f#3e,c#,g#) f#2e f#3e e2e (e3e,e4,a4,b4) e2e e3e d2e (d3e,c#4,g#4,c#5) (d2s,f#4,b4) (d2s,e4,a4) d3s c#2e
+(c#3e,f#4,c#5,e,f#5) c#2e c#3e 
+(b2e,c#5,e5) d3s d#5s d5s (b2e,a4,c#5) b3e b2e b3e b2s (b2s,c#5,e5) (b2s,a4,c#5) 
+(b2e,c#5,e5) d3s d#5s d5s (b2e,a4,c#5) b3e (b2e,c#4,e4,f#4,a4) b3e b2e b3e
+
+
+f#2e f#2e (c#4e,g#4) f#3e f#3e f#4s e4s a2e a2e f#4s e4s a3e a3e c#2e c#3e
+
+(b2e,c#5,e5) d3s d#5s d5s (b2e,a4,c#5) b3e b2e b3e b2s (b2s,c#5,e5) (b2s,a4,c#5) 
+(b2e,c#5,e5) d3s d#5s d5s (b2e,a4,c#5) b3e (b2e,c#4,e4,f#4,a4) b3e b2e b3e
+
+f#2e f#2e (c#4e,g#4) f#3e f#3e f#4s e4s a2e a2e f#4s e4s a3e a3e c#2e c#3e
+
+(b2e,c#5,e5) d3s d#5s d5s (b2e,a4,c#5) b3e b2e b3e b2s (b2s,c#5,e5) (b2s,a4,c#5) 
+(b2e,c#5,e5) d3s d#5s d5s (b2e,a4,c#5) b3e (b2e,c#4,e4,f#4,a4) b3e b2e b3e
+
+f#2e f#2e (c#4e,g#4) f#3e f#3e f#4s e4s a2e a2e f#4s e4s a3e a3e c#2e c#3e
+
+(b2e,c#5,e5) d3s d#5s d5s (b2e,a4,c#5) b3e b2e b3e b2s (b2s,c#5,e5) (b2s,a4,c#5) 
+(b2e,c#5,e5) d3s d#5s d5s (b2e,a4,c#5) b3e (b2e,c#4,e4,f#4,a4) b3e b2e b3e
+
+f#2e f#2e (c#4e,g#4) f#3e f#3e f#4s e4s a2e a2e f#4s e4s a3e a3e c#2e c#3e
+
+(b2e,c#5,e5) d3s d#5s d5s (b2e,a4,c#5) b3e b2e b3e b2s (b2s,c#5,e5) (b2s,a4,c#5) 
+(b2e,c#5,e5) d3s d#5s d5s (b2e,a4,c#5) b3e (b2e,c#4,e4,f#4,a4) b3e b2e b3e
+
+
+f#2e (f#3e,c#,g#) f#2e f#3e e2e (e3e,e4,a4,b4) e2e e3e d2e (d3e,c#4,g#4,c#5) (d2s,f#4,b4) (d2s,e4,a4) d3s c#2e
+(c#3e,f#4,c#5,e,f#5) c#2e c#3e 
+(b2e,c#5,e5) d3s d#5s d5s (b2e,a4,c#5) b3e b2e b3e b2s (b2s,c#5,e5) (b2s,a4,c#5) 
+(b2e,c#5,e5) d3s d#5s d5s (b2e,a4,c#5) b3e (b2e,c#4,e4,f#4,a4) b3e b2e b3e 
+
+f#2e (f#3e,c#,g#) f#2e f#3e e2e (e3e,e4,a4,b4) e2e e3e d2e (d3e,c#4,g#4,c#5) (d2s,f#4,b4) (d2s,e4,a4) d3s c#2e
+(c#3e,f#4,c#5,e,f#5) c#2e c#3e 
+
+d2e b2e d2e b2e d2e b2e d2e b2e d2e b2e d2e b2e
+
+e2e f#2e c#2e e2e
+
+f#2e (f#2e,f#3,c#4,g#4) (f#2e,c#4) (f#3e,b4)
+(e2e,f#4)(e3e,e4,f#4,a4,b4)(e2e,b4)(e3e,a4)
+(d2e,a3)(a3e,c#4,g#4,c#5)(d2e,g#4)(d3e,f#4)(c#2e,a4)(c#3e,a4,e5,f#5)(c#2e,c#4)(c#3e,b3) 
+
+
+(b2e,c#5,e5) d3s d#5s d5s (b2e,a4,c#5) b3e b2e b3e b2s (b2s,c#5,e5) (b2s,a4,c#5) 
+(b2e,c#5,e5) d3s d#5s d5s (b2e,a4,c#5) b3e (b2e,c#4,e4,f#4,a4) b3e b2e b3e
+
+f#2e (f#2e,f#3,c#4,g#4) (f#2e,c#4) (f#3e,b4)
+(e2e,f#4)(e3e,e4,f#4,a4,b4)(e2e,b4)(e3e,a4)
+(d2e,a3)(a3e,c#4,g#4,c#5)(d2e,g#4)(d3e,f#4)(c#2e,a4)(c#3e,a4,e5,f#5)(c#2e,c#4)(c#3e,b3) 
+
+
+(b2e,c#5,e5) d3s d#5s d5s (b2e,a4,c#5) b3e b2e b3e b2s (b2s,c#5,e5) (b2s,a4,c#5) 
+(b2e,c#5,e5) d3s d#5s d5s (b2e,a4,c#5) b3e (b2e,c#4,e4,f#4,a4) b3e b2e b3e
+
+f#2e (f#2e,f#3,c#4,g#4) (f#2e,c#4) (f#3e,b4)
+(e2e,f#4)(e3e,e4,f#4,a4,b4)(e2e,b4)(e3e,a4)
+(d2e,a3)(a3e,c#4,g#4,c#5)(d2e,g#4)(d3e,f#4)(c#2e,a4)(c#3e,a4,e5,f#5)(c#2e,c#4)(c#3e,b3) 
+
+f#3e a3e b3e a3e f#4e a4e b4e a4e c4e b4e a4e f#4e e4e f#4e a4e f#4e
+
+f#2e f#3e f#4e a4e c#5e a4e f#4e a4e
+
+e2e e3e a4e e4e b4e a4e g#4e a4e
+
+d#2e d#3e f#5e d#5e b5e a5e f#5e d#5e
+
+d3e d2e f#4e a4e f#4e f#3e f#2e f#2e
+
+
+f#2e f#3e f#4e a4e c#5e a4e f#4e a4e
+
+e2e e3e a4e e4e b4e a4e g#4e a4e
+
+d#2e d#3e f#5e d#5e b5e a5e f#5e d#5e
+
+d3e d2e f#4e a4e f#4e f#3e f#2e f#2e
+
+
+f#2e (f#2e,f#3) (f#2e,f#4) (f#2e,a4) (f#2e,c#5) (f#2e,a4) (f#2e,f#4) (f#2e,a4)
+
+e2e (e2e,e3) (e2e,a4) (e2e,e4) (e2e,b4) (e2e,a4) (e2e,g#4) (e2e,a4) 
+
+d#2e (d#2e,d#3) (d#2e,f#5) (d#2e,d#5) (d#2e,b5) (d#2e,a5) (d#2e,f#5) (d#2e,d#5)
+
+d3e d2e f#4e a4e f#4e f#3e f#2e f#2e
+
+
+f#2e (f#2e,f#3) (f#2e,f#4) (f#2e,a4) (f#2e,c#5) (f#2e,a4) (f#2e,f#4) (f#2e,a4)
+
+e2e (e2e,e3) (e2e,a4) (e2e,e4) (e2e,b4) (e2e,a4) (e2e,g#4) (e2e,a4) 
+
+d#2e (d#2e,d#3) (d#2e,f#5) (d#2e,d#5) (d#2e,b5) (d#2e,a5) (d#2e,f#5) (d#2e,d#5)
+
+d3e d2e f#4e a4e f#4e f#3e f#2e f#2e 
+
