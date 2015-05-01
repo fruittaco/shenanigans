@@ -35,13 +35,12 @@ main:
     	.data
     	
     	nl: .asciiz "\n"
-    	welcomemsg: .asciiz "Welcome to Shenanigans Music Interpreter.\nEnter \"1\" to play music from a file, or \"2\" to play directly from this window.\n"
-    	filemsg: .asciiz "Choose a music file to load.\n"
-    	consolemsg: .asciiz "Enter the line of music you would like to play, or 0 to exit to the main menu.\n"
+    	welcomemsg: .asciiz "Welcome to the Shenanigans Music Interpreter.\nEnter \"1\" to play music from a file, \"2\" to play directly from this window, or \"3\" to quit.\n"
+    	filemsg: .asciiz "Enter a music file to load, or \"0\" to exit to the main menu.\n"
+    	consolemsg: .asciiz "Enter the line of music you would like to play, or \"0\" to exit to the main menu.\n"
     	invalidfilemsg: .asciiz "Invalid file name, please try again.\n"
     	invalidmenuchoice: .asciiz "Invalid input, please try again.\n"
     	exitstring: .byte '0'
-    	noticemsg: .asciiz "THINGS ARE HAPPENING"
 
     	#Provides a list of pitches [indexed from a]
     	#		 A5  B5  C5  D5  E5  F5  G5  A4b B4b D5b E5b G5b                                                             A4  B4  C4  D4  E4  F4  G4  A3b B3b D4b E4b G4b A2  C3# D3  E3  F3  C3  G3	 A3  B3
@@ -65,6 +64,7 @@ menuInput:
 
    	beq $t0, 1, playFile
    	beq $t0, 2, playConsole
+	beq $t0, 3, end
         la $a0, invalidmenuchoice
         jal printtext
    	j menuInput
@@ -101,6 +101,10 @@ tryAgain:
 
         move $a0, $s5
         jal readstring
+
+	lb $t1, ($s5)
+	lb $t2, exitstring
+	beq $t2, $t1, startScreen
 
 removeNewline:
 	#$s5-string address
@@ -518,7 +522,7 @@ continueParse:
     	bne $t6, $a1, parseloop
 
 playNotes: 
-	ble $s4, $0, end	#$s4 is the number of notes remaining to be played
+	ble $s4, $0, endPlay	#$s4 is the number of notes remaining to be played
 	lw $a0, ($s0)	# pitch
 	lw $a1, ($s1)	# duration (ms)
 	lw $a2, ($s2)	# channel
@@ -538,7 +542,7 @@ increment:
 	add $s3, $s3, 4
 	sub $s4, $s4, 1
 	j playNotes
-	
+endPlay:	
 	beq $t4, 1, playFile
 	beq $t4, 2, playConsole
 end:
