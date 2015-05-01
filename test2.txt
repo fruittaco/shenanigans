@@ -1,1 +1,1 @@
-aw{v=fff}bw{v=fff}cw{v=p}dw
+{t=100}aw{v=fff}bw{v=fff}cw{v=p}dw

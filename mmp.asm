@@ -280,6 +280,19 @@ chordElementExit:
 #Parses a note for its pitch based on the array indices as earlier, returns the pitch
 #The new position in the input will be after the parsed pitch
 parseNote:
+
+	#First, handle the special case that the note is actually a rest [pitch -1]
+	bne $t6, 114, parseNoteContinue
+
+	#Load next character
+        addi $t5, $t5, 1
+        lb $t6, ($t5)
+	#Return -1
+	li $v0, -1
+	jr $ra
+
+parseNoteContinue:
+
         #Use the first character [the note] to set the initial pitch (stored in a0)
     	#Subtract and index into the pitch array
 
