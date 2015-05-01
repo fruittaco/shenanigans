@@ -1,53 +1,24 @@
-#macro to print text to the console
-.macro printtext(%msg)
-la $a0, %msg
+j main
+
+#function to print text to the console (address of text in a0)
+printtext:
 li $v0, 4
 syscall
-.end_macro
+jr $ra
 
-#macro to read a string into the memory location specified by destreg
-.macro readstring(%destreg)
+#function to read a string into the memory location specified by argument register
+readstring:
 li $v0, 8
 li $a1, 255
-move $a0, %destreg
 syscall
-.end_macro
-
-#macro to open files for reading
-#NOTE: opens files read-only
-.macro openfile(%filename, %filedescrip)
-move $a0, %filename
-li $v0, 13
-li $a1, 0
-li $a2, 0
-syscall
-move %filedescrip, $v0
-.end_macro
-
-#macro to read file into a string
-#address of string is stored in $v0 after the syscall 
-.macro readfile(%filedescrip, %inputbuf, %numchars)
-move $a0, %filedescrip
-move $a1, %inputbuf
-move $a2, %numchars
-li $v0, 14
-syscall
-.end_macro
-
-#macro to close a file
-.macro closefile(%filedescrip)
-move $a0, %filedescrip
-li $v0, 16
-syscall
-.end_macro
+jr $ra
 
 #allocates memory with a given size, storing the adress in the register ptr
-.macro malloc(%size, %ptr)
-move $a0, %size
+#assumes the size is in a0, returns the pointer
+malloc:
 li $v0, 9
 syscall
-move %ptr, $v0
-.end_macro
+jr $ra
 
 #Assumptions: s0 - pitch, s1 - duration, s2 - instruments, s3 - volumes
 #s4 - number of notes. Assumes string to read is in $s5
@@ -85,19 +56,27 @@ main:
     	.text
 	#print welcome and ask for a playback type
 startScreen: 
-   	printtext(welcomemsg)
+        la $a0, welcomemsg
+        jal printtext
 menuInput:
    	readint($t0)
    	beq $t0, 1, playFile
    	beq $t0, 2, playConsole
-   	printtext(invalidmenuchoice)
+        la $a0, invalidmenuchoice
+        jal printtext
    	j menuInput
 playConsole:
 	li $t4, 2	
-	printtext(consolemsg)
+        la $a0, consolemsg
+        jal printtext
 	li $a0, 255
-	malloc ($a0, $t0)
-	readstring($t0)
+
+        jal malloc
+        move $t0, $v0
+
+        move $a0, $t0
+        jal readstring
+
 	lb $t1, ($t0)
 	lb $t2, exitstring
 	beq $t2, $t1, startScreen
@@ -105,13 +84,19 @@ playConsole:
 	j allocateMemory
 playFile:
 	li $t4, 1
-	printtext(filemsg)
+        la $a0, filemsg
+        jal printtext
 	#attempt to open file.
 	#if error msg, reprompt user, else proceed
 tryAgain:
 	li $a0, 255
-	malloc($a0, $s5)
-    	readstring($s5)
+
+        jal malloc
+        move $s5, $v0
+
+        move $a0, $s5
+        jal readstring
+
 removeNewline:
 	#$s5-string address
 	#$s6-character count
@@ -123,26 +108,56 @@ loop:
 	subi $t1,$t1,2
 	sb $0,($t1)
 	openfile($s5, $s5)
-    	bge $v0, $0,goodFile
-    	printtext(invalidfilemsg)
+
+        #Open the file
+        move $a0, $s5
+        li $v0, 13
+        li $a1, 0
+        li $a2, 0
+        syscall
+        move $s5, $v0
+
+        bge $v0, $0,goodFile
+        la $a0, invalidfilemsg
+        jal printtext
 	j tryAgain
 goodFile:
 	# read file and prep for loading note arrays
 	li $t0,1000 # max number of notes
 	div $a0,$t0,2
 	mul $t1,$t0,2
-    	malloc($a0,$s6)
-    	readfile($s5,$s6,$t1)
-    	closefile($s5)
+
+        jal malloc
+        move $s6, $v0
+
+
+        #Read the file
+        move $a0, $s5 #File descriptor
+        move $a1, $s6 #buffer
+        move $a2, $t1 #numchars
+        li $v0, 14
+        syscall
+
+        #Close the file
+        move $a0, $s5
+        li $v0, 16
+        syscall
+
 allocateMemory:    	
 	move $a0,$t0
-    	malloc($a0,$s0)
-    	move $a0,$t0
-    	malloc($a0,$s1)
-    	move $a0,$t0
-    	malloc($a0,$s2)
-    	move $a0,$t0
-    	malloc($a0,$s3)
+        jal malloc
+        move $s0, $v0
+
+        jal malloc
+        move $s1, $v0
+
+        jal malloc
+        move $s2, $v0
+
+        jal malloc
+        move $s3, $v0
+
+        #Initialize counter for number of characters
     	move $s4,$0
 parsefile:
 	move $t0, $s0
