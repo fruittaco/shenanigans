@@ -59,7 +59,10 @@ startScreen:
         la $a0, welcomemsg
         jal printtext
 menuInput:
-   	readint($t0)
+	li $v0, 5
+	syscall
+	move $t0, $v0
+
    	beq $t0, 1, playFile
    	beq $t0, 2, playConsole
         la $a0, invalidmenuchoice
@@ -107,8 +110,7 @@ loop:
 	bnez $t2, loop
 	subi $t1,$t1,2
 	sb $0,($t1)
-	openfile($s5, $s5)
-
+	
         #Open the file
         move $a0, $s5
         li $v0, 13
@@ -124,8 +126,9 @@ loop:
 goodFile:
 	# read file and prep for loading note arrays
 	li $t0,1000 # max number of notes
-	div $a0,$t0,2
-	mul $t1,$t0,2
+	li $t7,2
+	div $a0,$t0,$t7
+	mul $t1,$t0,$t7
 
         jal malloc
         move $s6, $v0
@@ -190,6 +193,8 @@ nextchar:
 parseloop:
 	addi $s4,$s4,1
         lb $t6, ($t5)
+	li $s5, 21
+	li $s7, 80
 
 whitespacehandler:
         #Skip any number of newlines and spaces
@@ -277,7 +282,8 @@ parseNote:
     	#Subtract and index into the pitch array
 
     	subi $a0, $t6, 65
-    	mul $a0,$a0,4
+	li $t7,4
+    	mul $a0,$a0,$t7
     	la $a1, pitchlist
     	add $a0, $a1, $a0
     	lw $a0, ($a0)
@@ -341,12 +347,12 @@ parseDuration:
 
     	#Subtract and index into the duration array
     	subi $a0, $t6, 97
-    	mul $a0,$a0,4
+	li $t7,4
+    	mul $a0,$a0,$t7
     	la $a1, durationlist
     	add $a0, $a1, $a0
     	lw $a0, ($a0)
     	mul $a0, $a0, $s5 # $s5 is duration in ms of a 1/32nd note
-    	sw $a0, ($t1)
 	#TODO: Add error detection
 
         #Load next character
@@ -407,7 +413,7 @@ tempoCommand:
 	subi $s5,$s5,48
 tempoLoop:
 	addi $t5,$t5, 1
-	lb $t8,$t5
+	lb $t8,($t5)
 	subi $t8,$t8,48
 	beq $t8,125,finishTempo #125=}
 	li $t9, 10
@@ -479,7 +485,7 @@ instrumentCommand:
 	subi $s6,$s6,48
 instrumentLoop:
 	addi $t5,$t5, 1
-	lb $t8,$t5
+	lb $t8,($t5)
 	subi $t8,$t8,48
 	beq $t8,125,setInstrument #125=}
 	li $t9, 10
@@ -489,7 +495,7 @@ instrumentLoop:
 setInstrument:
 	subi $s6,$s6,1
 	li $a0, 0
-	li $a1,$s6
+	move $a1,$s6
 	li $v0, 38
 setInstrumentLoop:
 	beq $a0,10,continueParse
@@ -504,7 +510,7 @@ continueParse:
     	bne $t6, $a1, parseloop
 
 playNotes: 
-	ble $s4, 0, end	#$s4 is the number of notes remaining to be played
+	ble $s4, $0, end	#$s4 is the number of notes remaining to be played
 	lw $a0, ($s0)	# pitch
 	lw $a1, ($s1)	# duration (ms)
 	lw $a2, ($s2)	# channel
