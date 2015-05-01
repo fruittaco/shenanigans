@@ -1,0 +1,75 @@
+Instructions for the Shenanigans Music Player
+
+	The Shenanigans Music Player supports playback of music encoded in a custom text format. This text
+can be read from a file or entered into the command console of the MARS++ simulator. MARS++ can be downloaded
+from http://karnbianco.co.uk/blog/2010/11/12/mips-assembly-music-sequencer/. Starting the player will ask for
+a format you want to read music from. Once you select your format, you will be prompted for a file name or a
+string of music. Music is written as successive notes and commands (seperated by spaces and/or newlines)
+The format for music is as follows:
+
+Note format:
+	<note pitch><*flat or sharp><*note octave><note duration><*dot>
+	* indicates optional character
+
+	<note pitch>
+		Represented by a letter a-g, indicating the concert pitch of the note. An uppercase letter
+		will play one octave higher than a lowercase letter. An 'r' denotes a rest.
+	<flat or sharp>
+		flat character- b
+		sharp character- #
+		Optional character which will augment the pitch by a half step (up for #, down for b)
+	<note octave>
+		Optional character declaring the note's octave (defaults to 4). Note that an uppercase
+		letter for note pitch will add 1 to this value. For reference, "middle C" on a piano is
+		octave 4.
+	<note duration>
+		Represented by a character indicating the kind of note to be played.
+			32nd note:  t
+			16th note:  s
+			8th note:   e
+			triplet:    r
+			1/4 note:   q
+			1/2 note:   h
+			whole note: w
+	<dot>
+		An optional character. A '.' indicates a dotted note. This extends a note's duration by 50%.
+	Examples
+		f#5h.
+			A dotted-half (3 beat) concert f# played in the 5th octave
+		A2q
+			A quarter note concert a played in the 3rd octave
+		rw
+			A whole rest
+
+Command format:
+	<char>=<value>
+
+	Set tempo command
+		t=<tempo>
+		Sets the tempo to the integer <tempo>. <tempo> should represent the speed of the music in
+		beats per minute, assuming a quarter note is one beat. The default starting tempo is 90
+		beats per minute.
+	Set volume command
+		v=<dynamic>
+		Sets the volume to the string <dynamic>. <dynamic> is as string representing the volume of
+		the music. In order of increasing voulme, the supported dynamics are:
+			ppp
+			pp
+			p
+			mf
+			f
+			ff
+			fff
+		The default starting dynamic is mf.
+	Set instrument command
+		i=<instr>
+		Sets the instrument to the one specified by the integer <instr>. For a list of instruments
+		and there corresponding values go to http://www.midi.org/techspecs/gm1sound.php. The default
+		starting instrument is acoustic grand piano.
+	Examples
+		t=120
+			Set tempo to 120 beats per minute (quarter note = 120)
+		v=ff
+			Set volume to ff (fortissimo)
+		i=71
+			Set instrument to basson.
