@@ -5,27 +5,6 @@ li $v0, 4
 syscall
 .end_macro
 
-#macro to print text to the console from the memory loaction specified by the register
-.macro printtext2(%msg)
-move $a0, %msg
-li $v0, 4
-syscall
-.end_macro
-
-#macro to print an int
-.macro printint(%reg)
-move $a0, %reg
-li $v0, 1
-syscall
-.end_macro
-
-#macro to read an int into destreg
-.macro readint(%destreg)
-li $v0, 5
-syscall
-move %destreg, $v0
-.end_macro
-
 #macro to read a string into the memory location specified by destreg
 .macro readstring(%destreg)
 li $v0, 8
@@ -145,10 +124,11 @@ parsefile:
 	move $t2, $s2
 	move $t3, $s3
 	move $t5, $s6
+        j parseloop
 
-#Macro for storing things into the note representation arrays
+#Function for storing things into the note representation arrays
 #TODO: comment on the convention used here
-.macro storenote
+storenote:
     sw $v0, ($t0)
     sw $v1, ($t1)
     sw $t8, ($t2)
@@ -158,13 +138,13 @@ parsefile:
     addi $t1, $t1, 4
     addi $t2, $t2, 4
     addi $t3, $t3, 4
-.end_macro
+    jr $ra
 
-.macro nextchar
-        #Step the input position forward
-        addi $t5, $t5, 1
-        lb $t6, ($t5)
-.end_macro
+nextchar:
+    #Step the input position forward
+    addi $t5, $t5, 1
+    lb $t6, ($t5)
+    jr $ra
 
 parseloop:
 	addi $s4,$s4,1
@@ -181,7 +161,7 @@ whitespacehandler:
         j parsecontinue
 
 skipwhitespace:
-        nextchar
+        jal nextchar
         j whitespacehandler
 
 parsecontinue:
@@ -197,7 +177,7 @@ parsecontinue:
 
 
 parseChord:
-        nextchar #Move past the opening paren
+        jal nextchar #Move past the opening paren
 
         #Format example: (cw,e,g)
         #Read the first note and a duration
@@ -216,7 +196,7 @@ parseChord:
         li $t8, 1
         
 chordElement:
-        storenote
+        jal storenote
 
         #increment the channel counter
         addi $t8, $t8, 1
@@ -225,7 +205,7 @@ chordElement:
         li $t7, 44
         bne $t7, $t6, chordElementExit
     
-        nextchar
+        jal nextchar
 
         #Parse a note
         jal parseNote
@@ -238,7 +218,7 @@ chordElementExit:
         #NOTE: rests are taken to be a pitch of -1
         addi $t8, $t8, 1
         li $v0, -1
-        storenote
+        jal storenote
 
         #Move on to the next character
         addi $t5, $t5, 1
@@ -328,7 +308,9 @@ parseDuration:
     	sw $a0, ($t1)
 	#TODO: Add error detection
 
-        nextchar
+        #Load next character
+        addi $t5, $t5, 1
+        lb $t6, ($t5)
 
 
         #If the next character is a dot, then multiply the duration by 1.5
@@ -338,7 +320,9 @@ parseDuration:
         sra $s7, $a0, 1
         add $a0, $a0, $s7
         
-        nextchar
+        #Load next character
+        addi $t5, $t5, 1
+        lb $t6, ($t5)
 
 parseDurationExit:
 
@@ -357,11 +341,11 @@ parseNoteDuration:
     
     #Set the channel to 1
     li $t8, 1
-    storenote
+    jal storenote
 
     #Append a rest with the given duration
     li $v0, -1
-    storenote
+    jal storenote
 
     j continueParse
 
