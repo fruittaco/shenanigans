@@ -1,4 +1,4 @@
-{t=200}{v=fff}
+{t=200}{v=fff}{i=106} 
 b1e (b2e,b3,d#) b2e b2s b2s a2s rs 
 (b2e,b3,d#) b2e b2s b2s a2s rs 
 (b2e,b3,d#) b2e b2s b2s a2s rs 
