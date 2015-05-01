@@ -487,6 +487,7 @@ instrumentLoop:
 	add $s6,$s6,$t8
 	j instrumentLoop
 setInstrument:
+	subi $s6,$s6,1
 	li $a0, 0
 	li $a1,$s6
 	li $v0, 38
