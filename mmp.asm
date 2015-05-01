@@ -433,7 +433,7 @@ tempoLoop:
 finishTempo:		# $s5 is now beats/min
 	li $t8,1875	# 60000ms/32 1/32beats
 	div $s5,$t8,$s5	# $s5 is now ms/32nd note
-	j continueParse
+	j endCommand
 
 volumeCommand:
 	addi $t5,$t5,2
@@ -441,53 +441,53 @@ volumeCommand:
 	beq $s7,112,p #112='p'
 	beq $s7,109,m #109='m'
 	beq $s7,102,f #102='f'
-	j continueParse
+	j endCommand
 p:
 	addi $t5,$t5,1
 	lb $s7,($t5)
 	beq $s7,112,pp #112='p'
 	li $s7,49 #specified MIDI velocity for p
-	j continueParse
+	j endCommand
 pp:
 	addi $t5,$t5,1
 	lb $s7,($t5)
 	beq $s7,112,ppp #112='p'
 	li $s7,33 #specified MIDI velocity for pp
-	j continueParse
+	j endCommand
 ppp:
 	addi $t5,$t5,1
 	li $s7,16 #specified MIDI velocity for ppp
-	j continueParse
+	j endCommand
 m:
 	addi $t5,$t5,1
 	lb $s7,($t5)
 	beq $s7,112,mp #112='p'
 	beq $s7,102,mf #102='f'
-	j continueParse
+	j endCommand
 mp:
 	addi $t5,$t5,1
 	li $s7,64 #specified MIDI velocity for mp
-	j continueParse
+	j endCommand
 mf:
 	addi $t5,$t5,1
 	li $s7,80 #specified MIDI velocity for mf
-	j continueParse
+	j endCommand
 f:
 	addi $t5,$t5,1
 	lb $s7,($t5)
 	beq $s7,102,pp #112='p'
 	li $s7,96 #specified MIDI velocity for f
-	j continueParse
+	j endCommand
 ff:
 	addi $t5,$t5,1
 	lb $s7,($t5)
 	beq $s7,102,ppp #112='p'
 	li $s7,112 #specified MIDI velocity for ff
-	j continueParse
+	j endCommand
 fff:
 	addi $t5,$t5,1
 	li $s7,126 #specified MIDI velocity for fff
-	j continueParse
+	j endCommand
 
 instrumentCommand:
 	addi $t5,$t5,2
@@ -508,10 +508,16 @@ setInstrument:
 	move $a1,$s6
 	li $v0, 38
 setInstrumentLoop:
-	beq $a0,10,continueParse
+	beq $a0,10,endCommand
 	syscall
 	addi $a0,$a0,1
 	j setInstrumentLoop
+
+endCommand:
+	#Skip past the ending curly brace
+	jal nextchar
+	#Keep calm and parse
+	j continueParse
 
 continueParse:
     	
