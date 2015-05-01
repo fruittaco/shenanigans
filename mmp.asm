@@ -27,7 +27,7 @@ jr $ra
 #Reads in a list of pitch, duration pairs
 #Has
 
-.globl main
+.globl main 
 
 main:
     	addu $s7, $0, $ra
