@@ -168,10 +168,26 @@ parsefile:
 
 parseloop:
 	addi $s4,$s4,1
+        lb $t6, ($t5)
+
+whitespacehandler:
+        #Skip any number of newlines and spaces
+        li $t7, 32 #Skip spaces
+        beq $t7, $t6, skipwhitespace
+        li $t7, 10 #Skip newlines
+        beq $t7, $t6, skipwhitespace
+        li $t7, 13 #Skip carriage returns
+        beq $t7, $t6, skipwhitespace
+        j parsecontinue
+
+skipwhitespace:
+        nextchar
+        j whitespacehandler
+
+parsecontinue:
 
         #Determine if the first character is a '{'. If so, must be a command terminated with '}'.
         #Otherwise, must be dealing with a note
-        lb $t6, ($t5)
         li $t7, 173
         beq $t6, $t7, parseCommand
         #Determine if the first character is a '('. If so, must be the start of a chord.
