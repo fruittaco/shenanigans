@@ -175,7 +175,6 @@ parsefile:
         j parseloop
 
 #Function for storing things into the note representation arrays
-#TODO: comment on the convention used here
 storenote:
     sw $v0, ($t0)
     sw $v1, ($t1)
@@ -274,7 +273,6 @@ chordElementExit:
         addi $t5, $t5, 1
         lb $t6, ($t5)
 
-        #TODO: assert that the current character is an ending paren
         j continueParse
 
 
@@ -353,7 +351,6 @@ parseOctave:
 
 #Parses a duration from the input, and returns its length in $v0
 parseDuration:
-        #TODO: support other tempos as well!
 
     	#Subtract and index into the duration array
     	subi $a0, $t6, 97
@@ -363,7 +360,6 @@ parseDuration:
     	add $a0, $a1, $a0
     	lw $a0, ($a0)
     	mul $a0, $a0, $s5 # $s5 is duration in ms of a 1/32nd note
-	#TODO: Add error detection
 
         #Load next character
         addi $t5, $t5, 1
@@ -415,7 +411,6 @@ parseCommand:
 	beq $t6, $t7, volumeCommand
 	li $t7, 116 # t
 	beq $t6, $t7, instrumentCommand
-#TODO: error handling
 
 tempoCommand:
 	addi $t5,$t5,2
