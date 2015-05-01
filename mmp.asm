@@ -55,9 +55,16 @@ startScreen:
         la $a0, welcomemsg
         jal printtext
 menuInput:
-	li $v0, 5
-	syscall
+	#Read menu input from a string (allocate 256 bytes)
+	li $a0, 256
+	jal malloc
+	
 	move $t0, $v0
+	move $a0, $t0
+	jal readstring
+	#Compute the numerical value of the first character and store in t0
+	lb $a0, ($a0)
+	subi $t0, $a0, 48
 
    	beq $t0, 1, playFile
    	beq $t0, 2, playConsole
