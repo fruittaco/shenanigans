@@ -523,12 +523,13 @@ continueParse:
 
 playNotes: 
 	lw $s4,($s0)
-	beqz $s4, end	#if pitch is zero, no more notes
+	beqz $s4, endPlay	#if pitch is zero, no more notes
+	ble $s4, -2, endPlay
+	bge $s4, 109, endPlay
 	lw $s4, ($s1)	#long duration also signals end
-	bge $s4, 10000, end
+	bge $s4, 10000, endPlay
+	ble $s4, -1, endPlay
 	lw $a0, ($s0)	# pitch
-	li $v0,1
-	syscall
 	lw $a1, ($s1)	# duration (ms)
 	lw $a2, ($s2)	# channel
 	lw $a3, ($s3)	# volume
